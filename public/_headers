@@ -1,7 +1,7 @@
 # Cloudflare Workers static assets (and Netlify) read this file. Owner decisions 2026-11-15.
 #
 # Security headers for every response. The build (integrations/csp.ts) replaces
-# 'inline-script-hashes' with the sha256 of every inline script, so dist/_headers has the real CSP.
+# the inline-script-hashes placeholder in the CSP with the sha256 of every inline script, so dist/_headers has the real CSP.
 # Never put Cache-Control in this block: Cloudflare comma-joins a header set by two matching rules,
 # which would break the /_astro/* rule below.
 # static.cloudflareinsights.com and cloudflareinsights.com are for Cloudflare Web Analytics, which
