@@ -1,12 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { groupByYear, neighbours, publishedPosts, readingMinutes } from '../../src/lib/posts';
+import {
+  groupByYear,
+  neighbours,
+  publishedPosts,
+  readingMinutes,
+  type Post,
+} from '../../src/lib/posts';
 
 const post = (id: string, date: string, draft = false) =>
   ({
     id,
     body: '',
     data: { title: id, date: new Date(date), dek: 'd', kind: 'engineering', tags: [], draft },
-  }) as never;
+  }) as unknown as Post;
 
 const words = (n: number) => Array.from({ length: n }, () => 'word').join(' ');
 

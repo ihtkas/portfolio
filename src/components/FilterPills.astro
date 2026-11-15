@@ -1,0 +1,32 @@
+---
+interface Option {
+  id: string;
+  label: string;
+  count: number;
+  marker?: 'dot' | 'ring' | undefined;
+}
+
+interface Props {
+  /** Radio group name. Input ids are `${name}-${option.id}`; the first option starts checked. */
+  name: string;
+  options: Option[];
+}
+
+const { name, options } = Astro.props;
+---
+
+<fieldset class="filter">
+  <legend class="sr">Show</legend>
+  <div class="opts">
+    {options.map((o, i) => (
+      <>
+        <input type="radio" name={name} id={`${name}-${o.id}`} checked={i === 0} />
+        <label for={`${name}-${o.id}`}>
+          {o.marker && <i class:list={['mk', { ring: o.marker === 'ring' }]} />}
+          {o.label}
+          <small>{o.count}</small>
+        </label>
+      </>
+    ))}
+  </div>
+</fieldset>

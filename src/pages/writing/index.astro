@@ -1,8 +1,37 @@
 ---
+import { getCollection } from 'astro:content';
+import FilterPills from '../../components/FilterPills.astro';
+import PostRows from '../../components/PostRows.astro';
+import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
+import { groupByYear, publishedPosts } from '../../lib/posts';
+
+const posts = publishedPosts(await getCollection('posts'));
+const years = groupByYear(posts);
+const count = (kind: 'engineering' | 'life') => posts.filter((p) => p.data.kind === kind).length;
+const options = [
+  { id: 'all', label: 'All', count: posts.length },
+  { id: 'eng', label: 'Engineering', count: count('engineering'), marker: 'dot' as const },
+  { id: 'life', label: 'Life', count: count('life'), marker: 'ring' as const },
+];
 ---
 
-<!-- Placeholder: replaced in a later task. -->
-<Base title="Writing" description="Writing" current="writing" wide>
-  <h1>Writing</h1>
+<Base
+  title="Writing | Sakthi Natesan"
+  description="Notes on systems, teams and life off the keyboard."
+  current="writing"
+  wide
+>
+  <header class="intro">
+    <h1 class="title">Writing</h1>
+    <p class="lede">Notes on systems, teams and life off the keyboard.</p>
+    <FilterPills name="f" options={options} />
+  </header>
+  <div class="years">
+    {years.map((g) => (
+      <YearGroup id={`y${g.year}`} heading={String(g.year)}>
+        <PostRows posts={g.posts} />
+      </YearGroup>
+    ))}
+  </div>
 </Base>

@@ -1,0 +1,18 @@
+---
+interface Props {
+  id: string;
+  heading: string;
+  /** Small line under the heading (for example a date range). */
+  sub?: string | undefined;
+}
+
+const { id, heading, sub } = Astro.props;
+---
+
+<section class="year" aria-labelledby={id}>
+  <h2 id={id}>
+    {heading}
+    {sub && <small>{sub}</small>}
+  </h2>
+  <slot />
+</section>

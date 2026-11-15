@@ -39,6 +39,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     {site.socials.rss && (
       <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
     )}
+    <slot name="head" />
     <script is:inline>
       {
         const root = document.documentElement;

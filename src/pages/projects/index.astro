@@ -1,8 +1,79 @@
 ---
+import { getCollection } from 'astro:content';
+import FilterPills from '../../components/FilterPills.astro';
+import VideoFacade from '../../components/VideoFacade.astro';
+import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
+import { groupProjects } from '../../lib/projects';
+
+const projects = await getCollection('projects');
+const groups = groupProjects(projects);
+const oss = projects.filter((p) => p.data.kind === 'oss').length;
+const options = [
+  { id: 'all', label: 'All', count: projects.length },
+  { id: 'oss', label: 'Open source', count: oss, marker: 'dot' as const },
+  { id: 'work', label: 'At work', count: projects.length - oss, marker: 'ring' as const },
+];
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 
-<!-- Placeholder: replaced in a later task. -->
-<Base title="Projects" description="Projects" current="projects" wide>
-  <h1>Projects</h1>
+<Base
+  title="Projects | Sakthi Natesan"
+  description="Things Sakthi Natesan is building and has built, with code, demos and write-ups."
+  current="projects"
+  wide
+>
+  <header class="intro">
+    <h1 class="title">Projects</h1>
+    <p class="lede">
+      What I am building in the open, and the systems I built at work. Code, demos and the write-ups
+      behind them.
+    </p>
+    <FilterPills name="pf" options={options} />
+  </header>
+
+  <div class="years">
+    {groups.map((g) => (
+      <YearGroup id={`g-${slug(g.section)}`} heading={g.section}>
+        <ul class="proj">
+          {g.items.map(({ data }) => (
+            <li class={data.kind === 'oss' ? 'oss' : undefined}>
+              <div class:list={['p', { novid: !data.video }]}>
+                <div>
+                  <p class="kind">
+                    <i class:list={['mk', { ring: data.kind === 'work' }]} aria-hidden="true" />
+                    {data.kind === 'oss' ? 'Open source' : 'At work'} &middot; {data.period}
+                  </p>
+                  <h3>{data.title}</h3>
+                  <p class="what">{data.summary}</p>
+                  {data.stack.length > 0 && (
+                    <ul class="stack" aria-label="Stack">
+                      {data.stack.map((s) => (
+                        <li>{s}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {(data.links.github || data.links.demo || data.links.writeup) && (
+                    <p class="plinks">
+                      {data.links.github && <a href={data.links.github}>GitHub</a>}
+                      {data.links.demo && <a href={data.links.demo}>Demo</a>}
+                      {data.links.writeup && <a href={data.links.writeup}>Write-up</a>}
+                    </p>
+                  )}
+                </div>
+                {data.video && (
+                  <VideoFacade
+                    youtubeId={data.video.youtubeId}
+                    title={data.title}
+                    duration={data.video.duration}
+                    poster={data.video.poster}
+                  />
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </YearGroup>
+    ))}
+  </div>
 </Base>

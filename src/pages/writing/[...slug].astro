@@ -1,0 +1,82 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import JsonLd from '../../components/JsonLd.astro';
+import Base from '../../layouts/Base.astro';
+import { neighbours, publishedPosts, readingMinutes } from '../../lib/posts';
+import { site } from '../../../site.config';
+
+export const getStaticPaths = (async () => {
+  const posts = publishedPosts(await getCollection('posts'));
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, ...neighbours(posts, post.id) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const { title, dek, date, updated, tags } = post.data;
+const minutes = readingMinutes(post.body ?? '');
+const day = (d: Date) => d.toISOString().slice(0, 10);
+const long = date.toLocaleDateString('en-US', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const url = new URL(`/writing/${post.id}/`, Astro.site).href;
+const posting = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description: dek,
+  datePublished: day(date),
+  ...(updated && { dateModified: day(updated) }),
+  author: { '@type': 'Person', name: site.name, url: new URL('/', Astro.site).href },
+  url,
+  mainEntityOfPage: url,
+};
+---
+
+<Base title={`${title} | ${site.name}`} description={dek} current="writing">
+  <JsonLd slot="head" data={posting} />
+  <article class="post">
+    <a class="back" href="/writing/">
+      &larr; All writing
+    </a>
+    <h1>{title}</h1>
+    <div class="meta">
+      <time datetime={day(date)}>{long}</time>
+      <span>{minutes} min read</span>
+      {tags.length > 0 && (
+        <ul class="tags" aria-label="Tags">
+          {tags.map((t) => (
+            <li>{t}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {(newer || older) && (
+      <nav class="pager" aria-label="More posts">
+        {newer && (
+          <a class="newer" href={`/writing/${newer.id}/`} rel="prev">
+            <span>&larr; Newer</span>
+            <strong>{newer.data.title}</strong>
+          </a>
+        )}
+        {older && (
+          <a class="older" href={`/writing/${older.id}/`} rel="next">
+            <span>Older &rarr;</span>
+            <strong>{older.data.title}</strong>
+          </a>
+        )}
+      </nav>
+    )}
+  </article>
+</Base>

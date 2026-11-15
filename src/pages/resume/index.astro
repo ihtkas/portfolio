@@ -1,8 +1,79 @@
 ---
+import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
+import { loadResume } from '../../lib/resume';
+import { site } from '../../../site.config';
+
+const resume = loadResume();
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 
-<!-- Placeholder: replaced in a later task. -->
-<Base title="Resume" description="Resume" current="resume" wide>
-  <h1>Resume</h1>
+<Base
+  title="Resume | Sakthi Natesan"
+  description="Experience, skills and education of Sakthi Natesan."
+  current="resume"
+  wide
+>
+  <header class="intro split">
+    <div>
+      <h1 class="title">Resume</h1>
+      <p class="who">
+        <b>{site.name}</b>, {site.location}
+      </p>
+      <p class="lede">{resume.summary}</p>
+      <div class="btns">
+        <a class="btn solid" href={resume.pdf} download>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M7 1h2v7.6l2.6-2.6 1.4 1.4L8 12.4 3 7.4 4.4 6 7 8.6zM2 13h12v2H2z" />
+          </svg>
+          Download PDF
+        </a>
+      </div>
+    </div>
+    <aside class="facts" aria-label="Skills and education">
+      <div>
+        <h2>Skills</h2>
+        <dl>
+          {Object.entries(resume.skills).map(([group, items]) => (
+            <>
+              <dt>{group}</dt>
+              <dd>{items.join(', ')}</dd>
+            </>
+          ))}
+        </dl>
+      </div>
+      <div>
+        <h2>Education</h2>
+        {resume.education.map((e) => (
+          <div class="edu">
+            <b>{e.school}</b>
+            <span>
+              {e.degree}, {e.years}
+            </span>
+          </div>
+        ))}
+      </div>
+    </aside>
+  </header>
+
+  <div class="years">
+    {resume.orgs.map((org) => (
+      <YearGroup id={`r-${slug(org.name)}`} heading={org.name} sub={org.period}>
+        <div>
+          {org.roles.map((role) => (
+            <article class="role">
+              <h3>{role.title}</h3>
+              <span class="when">{role.period}</span>
+              {role.intro && <p class="about">{role.intro}</p>}
+              <ul>
+                {role.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </YearGroup>
+    ))}
+  </div>
 </Base>
