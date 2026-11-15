@@ -77,6 +77,15 @@ test.describe('featured slideshow', () => {
   });
 });
 
+test.describe('slideshow without JavaScript', () => {
+  test('hides the controls but keeps the slides visible', async ({ page, javaScriptEnabled }) => {
+    test.skip(javaScriptEnabled, 'nojs only');
+    await page.goto('/');
+    await expect(page.locator('.reel .ctrl')).toBeHidden();
+    await expect(page.locator('.reel .slide').first()).toBeVisible();
+  });
+});
+
 test.describe('video facade', () => {
   test('no youtube or ytimg request before a click', async ({ page }) => {
     const hits: string[] = [];

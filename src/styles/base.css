@@ -1183,3 +1183,6 @@ html:not(.js) .switch {
     scroll-behavior: auto;
   }
 }
+html:not(.js) .ctrl {
+  display: none;
+}
