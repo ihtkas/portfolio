@@ -20,6 +20,7 @@ const keyOf = (href: string): string => (href === '/' ? 'home' : href.replaceAll
     {site.nav.map((item) => (
       <a
         href={item.href}
+        data-astro-prefetch="load"
         class={item.href === '/' ? 'nav-home' : undefined}
         aria-current={keyOf(item.href) === current ? 'page' : undefined}
       >

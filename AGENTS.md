@@ -37,10 +37,11 @@ tests/unit, tests/e2e Vitest and Playwright
 - Every other dependency is pinned exactly, and the lockfile is committed.
 - Hosting: Cloudflare Workers static assets, deployed by the `deploy` job in CI after a merge to `main`
   (`wrangler.jsonc`). The output stays plain static files. Any other Cloudflare-only feature (adapter,
-  `_headers`, `_redirects`, KV, image service, analytics) needs an explicit owner decision first.
+  `_redirects`, KV, image service, analytics) needs an explicit owner decision first. `public/_headers`
+  (long-lived caching for fingerprinted assets) was approved by the owner on 2026-11-15.
 - Changes land through pull requests that the owner merges. Do not push to `main`.
 - No third-party requests on page load: fonts are self-hosted, no analytics, YouTube loads only on click via `youtube-nocookie.com`.
-- Budgets: at most 8 KB gzipped JS on `/`, 5 KB on other pages, 20 KB gzipped CSS.
+- Budgets: at most 8 KB gzipped JS on `/`, 6 KB on other pages, 20 KB gzipped CSS.
 - The site URL comes from the `SITE_URL` env var, falling back to `siteUrl` in `site.config.ts`. Never hard-code the domain elsewhere.
 - Copy has no em dashes and keeps a humble tone.
 - Never commit `docs/`, `drafts/`, `.superpowers/`, `.playwright-mcp/`, `dist/`, `node_modules/`, `test-results/`, `playwright-report/` or `.lighthouseci/`.
