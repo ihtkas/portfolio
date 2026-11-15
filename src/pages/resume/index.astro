@@ -19,7 +19,7 @@ const resume = loadResume();
       <p class="who">
         <b>{site.name}</b>, {site.location}
       </p>
-      <p class="lede">{resume.summary}</p>
+      <p class="lede summary">{resume.summary}</p>
       {resume.pdf && (
         <div class="btns">
           <a class="btn solid" href={resume.pdf} download>
