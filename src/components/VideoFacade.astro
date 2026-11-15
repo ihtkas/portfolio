@@ -14,12 +14,12 @@ interface Props {
 const { youtubeId, title, duration, poster, label = 'Video', loading = 'lazy' } = Astro.props;
 ---
 
+<!-- no aria-label: the visible text (duration, title, label) is the accessible name -->
 <a
   class="vid"
   href={`https://www.youtube.com/watch?v=${youtubeId}`}
   data-youtube={youtubeId}
   data-title={title}
-  aria-label={`Play ${title} (YouTube)`}
 >
   <Image src={poster} alt="" width={640} loading={loading} decoding="async" />
   <span class="len">{duration}</span>

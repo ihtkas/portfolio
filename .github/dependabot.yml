@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ['*']
+    ignore:
+      # Pinned to match the owner's agent sandbox image; bump together with it.
+      - dependency-name: '@playwright/test'
+      - dependency-name: 'playwright'
+      - dependency-name: 'playwright-core'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

@@ -20,3 +20,18 @@ tasks:
     desc: Run Playwright tests
     cmds:
       - pnpm playwright test
+  budgets:
+    desc: Check per-page gzipped JS and CSS budgets against dist
+    cmds:
+      - node scripts/check-budgets.mjs dist
+  lighthouse:
+    desc: Run Lighthouse CI against dist (needs Chrome; set CHROME_PATH if needed)
+    cmds:
+      - pnpm lhci autorun
+  gate:
+    desc: Everything CI runs except Lighthouse
+    cmds:
+      - task: check
+      - task: build
+      - task: budgets
+      - task: e2e

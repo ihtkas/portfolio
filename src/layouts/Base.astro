@@ -5,15 +5,19 @@ import '../styles/base.css';
 import Footer from '../components/Footer.astro';
 import Header, { type NavKey } from '../components/Header.astro';
 import { site } from '../../site.config';
+// Preloading the body and display fonts avoids a layout shift when they swap in.
+import bodyFont from '../../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
+import displayFont from '../../node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
 
 interface Props {
   title: string;
   description: string;
   current?: NavKey | undefined;
   wide?: boolean | undefined;
+  noindex?: boolean | undefined;
 }
 
-const { title, description, current, wide = false } = Astro.props;
+const { title, description, current, wide = false, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-default.png', Astro.site);
 ---
@@ -25,7 +29,11 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />

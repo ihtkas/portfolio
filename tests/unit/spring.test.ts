@@ -24,6 +24,7 @@ describe('spring', () => {
   it('settles on the target', () => {
     // the 0.05 threshold also covers velocity, which takes a little over 3 s to decay
     expect(isSettled(run(0.5).state, target)).toBe(false);
+    expect(isSettled(run(2).state, target)).toBe(false);
     expect(isSettled(run(4).state, target)).toBe(true);
   });
 

@@ -1,13 +1,13 @@
 ---
-// Wired up by src/scripts/theme.ts. The label is corrected on load to match
-// the effective theme; dark is the default.
+// Wired up by src/scripts/theme.ts. An inline script right after the button
+// sets the label for the effective theme before first paint.
 ---
 
 <button
   class="switch"
   type="button"
   data-theme-toggle
-  aria-label="Switch to light theme"
+  aria-label="Toggle color theme"
   title="Dark / light"
 >
   <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
@@ -18,6 +18,14 @@
     <path class="moon" d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"></path>
   </svg>
 </button>
+<script is:inline>
+  {
+    const b = document.currentScript.previousElementSibling;
+    const t = document.documentElement.dataset.theme;
+    const light = t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
+    b.setAttribute('aria-label', 'Switch to ' + (light ? 'dark' : 'light') + ' theme');
+  }
+</script>
 
 <script>
   import '../scripts/theme';

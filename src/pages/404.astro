@@ -1,8 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
+import { site } from '../../site.config';
 ---
 
-<Base title="Page not found | Sakthi Natesan" description="This page does not exist." wide>
+<Base title={`Page not found | ${site.name}`} description="This page does not exist." wide noindex>
   <header class="intro lost">
     <h1 class="title">Not found</h1>
     <p class="lede">That page is not here. It may have moved, or the link may be wrong.</p>

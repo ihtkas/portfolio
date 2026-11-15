@@ -881,7 +881,7 @@ body {
   padding: 1px 10px;
 }
 
-/* header bar instruments (barfx, a later task) */
+/* header bar instruments (driven by src/scripts/barfx) */
 .bar {
   isolation: isolate;
 }
@@ -1562,4 +1562,19 @@ html:not(.js) .ctrl {
 /* ---------- 404 ---------- */
 .lost .btns {
   margin-top: clamp(18px, 3vh, 26px);
+}
+
+/* long unbreakable content text must wrap instead of scrolling the page */
+.title,
+.proj h3,
+.role h3,
+.pager strong,
+.facts .edu b,
+.facts .edu span,
+.facts dt,
+.facts dd,
+.rows h3,
+.intro h1,
+.intro h2 {
+  overflow-wrap: anywhere;
 }

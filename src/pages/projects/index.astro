@@ -15,11 +15,12 @@ const options = [
   { id: 'work', label: 'At work', count: projects.length - oss, marker: 'ring' as const },
 ];
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+import { site } from '../../../site.config';
 ---
 
 <Base
-  title="Projects | Sakthi Natesan"
-  description="Things Sakthi Natesan is building and has built, with code, demos and write-ups."
+  title={`Projects | ${site.name}`}
+  description={`Things ${site.name} is building and has built, with code, demos and write-ups.`}
   current="projects"
   wide
 >

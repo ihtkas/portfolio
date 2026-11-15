@@ -31,6 +31,8 @@ const posts = readEntries('src/content/posts').filter((p) => !p.draft);
 const projects = readEntries('src/content/projects');
 const newestSlug = 'sample-engineering-post';
 const oldestSlug = 'sample-life-post';
+// dated between the other two, so it is the neighbour of both
+const middleSlug = 'sample-long-word-post';
 
 test.describe('writing index', () => {
   test('filter counts match the data and filtering hides rows and empty years', async ({
@@ -80,7 +82,7 @@ test.describe('post page', () => {
   test('the newest post has no Newer link and Older goes to the next slug', async ({ page }) => {
     await page.goto(`/writing/${newestSlug}/`);
     await expect(page.locator('.pager .newer')).toHaveCount(0);
-    await expect(page.locator('.pager .older')).toHaveAttribute('href', `/writing/${oldestSlug}/`);
+    await expect(page.locator('.pager .older')).toHaveAttribute('href', `/writing/${middleSlug}/`);
   });
 
   test('the oldest post has no Older link and Newer goes to the previous slug', async ({
@@ -88,7 +90,7 @@ test.describe('post page', () => {
   }) => {
     await page.goto(`/writing/${oldestSlug}/`);
     await expect(page.locator('.pager .older')).toHaveCount(0);
-    await expect(page.locator('.pager .newer')).toHaveAttribute('href', `/writing/${newestSlug}/`);
+    await expect(page.locator('.pager .newer')).toHaveAttribute('href', `/writing/${middleSlug}/`);
   });
 
   test('does not scroll sideways', async ({ page }) => {
@@ -216,6 +218,8 @@ test.describe('404', () => {
     const res = await page.goto('/no-such-page/');
     expect(res?.status()).toBe(404);
     await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await expect(page).toHaveTitle(`Page not found | ${site.name}`);
     await expect(page.locator('main').getByRole('link', { name: /home/i })).toHaveAttribute(
       'href',
       '/',
