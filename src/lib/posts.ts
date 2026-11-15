@@ -9,21 +9,22 @@ export function readingMinutes(markdown: string): number {
   return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
 }
 
+const newestFirst = (posts: Post[]): Post[] =>
+  [...posts].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
 /** Newest first. Drafts are dropped unless `includeDrafts` (default: outside production). */
 export function publishedPosts(
   all: Post[],
   { includeDrafts = !import.meta.env.PROD }: { includeDrafts?: boolean } = {},
 ): Post[] {
-  return all
-    .filter((p) => includeDrafts || !p.data.draft)
-    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return newestFirst(all.filter((p) => includeDrafts || !p.data.draft));
 }
 
-/** Expects posts already sorted newest first. */
+/** Groups by UTC year, newest first. Sorts a copy, so input order does not matter. */
 export function groupByYear(posts: Post[]): { year: number; posts: Post[] }[] {
   const groups: { year: number; posts: Post[] }[] = [];
-  for (const post of posts) {
-    const year = post.data.date.getFullYear();
+  for (const post of newestFirst(posts)) {
+    const year = post.data.date.getUTCFullYear();
     const last = groups[groups.length - 1];
     if (last?.year === year) last.posts.push(post);
     else groups.push({ year, posts: [post] });
@@ -31,11 +32,12 @@ export function groupByYear(posts: Post[]): { year: number; posts: Post[] }[] {
   return groups;
 }
 
-/** Expects posts already sorted newest first. */
+/** Newer and older neighbours of `slug`. Sorts a copy, so input order does not matter. */
 export function neighbours(posts: Post[], slug: string): { newer?: Post; older?: Post } {
-  const i = posts.findIndex((p) => p.id === slug);
+  const sorted = newestFirst(posts);
+  const i = sorted.findIndex((p) => p.id === slug);
   if (i === -1) return {};
-  const newer = posts[i - 1];
-  const older = posts[i + 1];
+  const newer = sorted[i - 1];
+  const older = sorted[i + 1];
   return { ...(newer && { newer }), ...(older && { older }) };
 }

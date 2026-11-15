@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { groupByYear, neighbours, publishedPosts, readingMinutes } from '../../src/lib/posts';
 
 const post = (id: string, date: string, draft = false) =>
@@ -16,9 +16,18 @@ describe('readingMinutes', () => {
 });
 
 describe('publishedPosts', () => {
+  afterEach(() => vi.unstubAllEnvs());
   const all = [post('a', '2024-01-01'), post('b', '2025-01-01', true), post('c', '2025-06-01')];
   it('drops drafts and sorts newest first when drafts are excluded', () => {
     expect(publishedPosts(all, { includeDrafts: false }).map((p) => p.id)).toEqual(['c', 'a']);
+  });
+  it('drops drafts by default in production', () => {
+    vi.stubEnv('PROD', true);
+    expect(publishedPosts(all).map((p) => p.id)).toEqual(['c', 'a']);
+  });
+  it('keeps drafts by default outside production', () => {
+    vi.stubEnv('PROD', false);
+    expect(publishedPosts(all).map((p) => p.id)).toEqual(['c', 'b', 'a']);
   });
   it('keeps drafts when included', () => {
     expect(publishedPosts(all, { includeDrafts: true }).map((p) => p.id)).toEqual(['c', 'b', 'a']);
@@ -38,6 +47,23 @@ describe('groupByYear', () => {
   });
 });
 
+describe('groupByYear input order and time zone', () => {
+  it('sorts a copy newest first and does not mutate the input', () => {
+    const input = [post('a', '2024-01-01'), post('c', '2025-06-01'), post('b', '2025-01-01')];
+    const groups = groupByYear(input);
+    expect(groups.map((g) => g.year)).toEqual([2025, 2024]);
+    expect(groups[0]?.posts.map((p) => p.id)).toEqual(['c', 'b']);
+    expect(input.map((p) => p.id)).toEqual(['a', 'c', 'b']);
+  });
+  it('groups by the UTC year', () => {
+    const groups = groupByYear([
+      post('x', '2025-01-01T00:00:00Z'),
+      post('y', '2024-12-31T23:59:59Z'),
+    ]);
+    expect(groups.map((g) => g.year)).toEqual([2025, 2024]);
+  });
+});
+
 describe('neighbours', () => {
   const sorted = [post('c', '2025-06-01'), post('b', '2025-01-01'), post('a', '2024-01-01')];
   it('has no newer for the newest post', () => {
@@ -50,5 +76,12 @@ describe('neighbours', () => {
     expect(n.older).toBeUndefined();
     expect(n.newer?.id).toBe('b');
   });
+  it('works on unsorted input', () => {
+    const shuffled = [post('a', '2024-01-01'), post('c', '2025-06-01'), post('b', '2025-01-01')];
+    const n = neighbours(shuffled, 'b');
+    expect(n.newer?.id).toBe('c');
+    expect(n.older?.id).toBe('a');
+  });
+  it('returns nothing for an empty list', () => expect(neighbours([], 'x')).toEqual({}));
   it('returns nothing for an unknown slug', () => expect(neighbours(sorted, 'zzz')).toEqual({}));
 });
