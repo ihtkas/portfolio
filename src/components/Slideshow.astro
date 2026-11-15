@@ -1,0 +1,89 @@
+---
+import type { FeaturedItem } from '../lib/featured';
+import { readingMinutes } from '../lib/posts';
+import VideoFacade from './VideoFacade.astro';
+
+interface Props {
+  items: FeaturedItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <section class="reel" aria-roledescription="carousel" aria-label="Featured">
+    <p class="kick">Featured</p>
+    <div class="strip" tabindex="0" aria-live="off">
+      {items.map((item, k) => {
+        const label = `${k + 1} of ${items.length}`;
+        if (item.kind === 'post') {
+          const { data, id, body } = item.entry;
+          const href = `/writing/${id}/`;
+          return (
+            <article class="slide" aria-roledescription="slide" aria-label={label}>
+              <a
+                class:list={['card', { life: data.kind === 'life' }]}
+                href={href}
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <span class="read">{readingMinutes(body ?? '')} min read</span>
+                <q>{data.title}</q>
+              </a>
+              <h2>
+                <a href={href}>{data.title}</a>
+              </h2>
+              <p>{data.dek}</p>
+            </article>
+          );
+        }
+        const { data } = item.entry;
+        return (
+          <article class="slide" aria-roledescription="slide" aria-label={label}>
+            {data.video ? (
+              <VideoFacade
+                youtubeId={data.video.youtubeId}
+                title={data.title}
+                duration={data.video.duration}
+                poster={data.video.poster}
+                label="Project demo"
+              />
+            ) : (
+              <a class="card" href="/projects/" tabindex="-1" aria-hidden="true">
+                <span class="read">{data.period}</span>
+                <q>{data.title}</q>
+              </a>
+            )}
+            <h2>
+              <a href="/projects/">{data.title}</a>
+            </h2>
+            <p>{data.summary}</p>
+          </article>
+        );
+      })}
+    </div>
+    <div class="ctrl">
+      <div class="dots" role="group" aria-label="Choose slide">
+        {items.map((_, k) => (
+          <button
+            type="button"
+            aria-label={`Slide ${k + 1}`}
+            aria-current={k === 0 ? 'true' : 'false'}
+          ></button>
+        ))}
+      </div>
+      <div class="nav">
+        <button type="button" data-step="-1" aria-label="Previous slide">
+          &larr;
+        </button>
+        <button type="button" data-step="1" aria-label="Next slide">
+          &rarr;
+        </button>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  import '../scripts/slideshow';
+</script>

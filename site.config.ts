@@ -27,5 +27,6 @@ export const site: SiteConfig = {
   featured: [
     { kind: 'post', slug: 'sample-engineering-post' },
     { kind: 'project', slug: 'sample-oss-project' },
+    { kind: 'project', slug: 'sample-work-project' },
   ],
 };

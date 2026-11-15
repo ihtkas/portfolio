@@ -1,0 +1,19 @@
+---
+interface Props {
+  items: { id: string; label: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="index" aria-label="On this page">
+  {items.map((item, k) => (
+    <li>
+      <a href={`#${item.id}`}>
+        <b>{String(k + 1).padStart(2, '0')}</b>
+        <i></i>
+        {item.label}
+      </a>
+    </li>
+  ))}
+</ol>

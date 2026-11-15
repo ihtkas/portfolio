@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  youtubeId: string;
+  title: string;
+  duration: string;
+  poster: ImageMetadata;
+  label?: string | undefined;
+  loading?: 'lazy' | 'eager' | undefined;
+}
+
+const { youtubeId, title, duration, poster, label = 'Video', loading = 'lazy' } = Astro.props;
+---
+
+<a
+  class="vid"
+  href={`https://www.youtube.com/watch?v=${youtubeId}`}
+  data-youtube={youtubeId}
+  data-title={title}
+  aria-label={`Play ${title} (YouTube)`}
+>
+  <Image src={poster} alt="" width={640} loading={loading} decoding="async" />
+  <span class="len">{duration}</span>
+  <span class="poster">
+    {title}
+    <small>{label}</small>
+  </span>
+  <span class="play" aria-hidden="true"></span>
+</a>
+
+<script>
+  import '../scripts/video';
+</script>

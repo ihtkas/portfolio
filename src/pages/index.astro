@@ -1,9 +1,71 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import ChapterIndex from '../components/ChapterIndex.astro';
+import PostRows from '../components/PostRows.astro';
+import Slideshow from '../components/Slideshow.astro';
+import Social from '../components/Social.astro';
+import { resolveFeatured } from '../lib/featured';
+import { publishedPosts } from '../lib/posts';
 import { site } from '../../site.config';
+
+const posts = publishedPosts(await getCollection('posts'));
+const projects = await getCollection('projects');
+const featured = resolveFeatured(site.featured, posts, projects);
+const latest = posts.slice(0, 3);
+const chapters = [
+  { id: 's1', label: 'About' },
+  { id: 's2', label: 'Now' },
+  { id: 's3', label: 'Writing' },
+];
 ---
 
-<!-- Placeholder: replaced in a later task. -->
-<Base title={site.name} description={site.description} current="home" wide>
-  <h1>{site.name}</h1>
+<Base title={site.name} description={site.description} current="home">
+  <div class="stage">
+    <aside class="side" aria-label="Introduction">
+      <h1 class="sr">{site.name}</h1>
+      <Slideshow items={featured} />
+      <ChapterIndex items={chapters} />
+      <Social />
+    </aside>
+
+    <div class="main">
+      <section class="sec about" id="s1" aria-labelledby="h-about">
+        <div class="head">
+          <span class="n">01</span>
+          <h2 id="h-about">About</h2>
+        </div>
+        <p>{site.about}</p>
+      </section>
+
+      <section class="sec" id="s2" aria-labelledby="h-now">
+        <div class="head">
+          <span class="n">02</span>
+          <h2 id="h-now">Now building</h2>
+        </div>
+        <ul class="now-list">
+          {site.now.map((item) => (
+            <li>
+              <b>{item.title}</b>
+              <span>{item.line}</span>
+            </li>
+          ))}
+        </ul>
+        <a class="more" href="/projects/">
+          All projects
+        </a>
+      </section>
+
+      <section class="sec" id="s3" aria-labelledby="h-writing">
+        <div class="head">
+          <span class="n">03</span>
+          <h2 id="h-writing">Writing</h2>
+        </div>
+        <PostRows posts={latest} compact />
+        <a class="more" href="/writing/">
+          All writing
+        </a>
+      </section>
+    </div>
+  </div>
 </Base>

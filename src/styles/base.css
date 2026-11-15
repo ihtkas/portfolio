@@ -923,3 +923,263 @@ html:not(.js) .switch {
 .skip:focus {
   top: 8px;
 }
+
+/* ---------- home ---------- */
+/* running slides in the side column: projects and posts, in place of the name */
+.reel {
+  position: relative;
+  margin-top: clamp(4px, 1vh, 12px);
+}
+.reel .kick {
+  font-family: var(--display);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.reel .kick::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: var(--lamp);
+}
+.strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  border-radius: 12px;
+}
+.strip::-webkit-scrollbar {
+  display: none;
+}
+.slide {
+  scroll-snap-align: start;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 2px;
+}
+.slide .vid {
+  width: 100%;
+}
+.card {
+  aspect-ratio: 16/9;
+  max-width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  padding: clamp(18px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-decoration: none;
+  background:
+    radial-gradient(
+      80% 90% at 85% 0%,
+      color-mix(in srgb, var(--lamp) 18%, transparent),
+      transparent 65%
+    ),
+    linear-gradient(160deg, var(--raise), var(--bg));
+}
+.card q {
+  font-family: var(--display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 0.9;
+  quotes: none;
+  background: linear-gradient(180deg, var(--name-a), var(--name-b) 60%, var(--name-c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card.life q {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  text-transform: none;
+  font-size: clamp(28px, 2.8vw, 40px);
+  line-height: 1.05;
+}
+.card .read {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mute);
+}
+.slide h2 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(26px, 2.4vw, 34px);
+  line-height: 1.04;
+}
+.slide h2 a {
+  text-decoration: none;
+}
+.slide h2 a:hover {
+  color: var(--lamp-hot);
+}
+.slide p {
+  color: var(--mute);
+  max-width: 30em;
+  line-height: 1.45;
+}
+.ctrl {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+.dots {
+  display: flex;
+  gap: 8px;
+}
+.dots button {
+  width: 30px;
+  height: 20px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+}
+.dots button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 9px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--rule);
+}
+.dots button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--lamp);
+  width: 0;
+}
+.dots button[aria-current='true']::after {
+  width: 100%;
+}
+.reel.playing .dots button[aria-current='true']::after {
+  width: 0;
+  animation: fill var(--dur, 7s) linear forwards;
+}
+@keyframes fill {
+  to {
+    width: 100%;
+  }
+}
+.ctrl .nav {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.ctrl .nav button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--mute);
+  cursor: pointer;
+  font: 500 16px/1 var(--display);
+}
+.ctrl .nav button:hover {
+  color: var(--ink);
+  border-color: var(--mute);
+}
+
+.side .index {
+  padding-top: 28px;
+}
+
+.stage .main {
+  padding: clamp(120px, 30vh, 280px) 0 0;
+}
+.about p {
+  font-size: clamp(19px, 0.6vw + 14px, 22px);
+  line-height: 1.6;
+  max-width: 36em;
+}
+.about p strong {
+  font-weight: 500;
+  color: var(--lamp-hot);
+}
+.now-list {
+  list-style: none;
+}
+.now-list li {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 4px 20px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+}
+.now-list li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+.now-list b {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(23px, 1.9vw, 28px);
+  line-height: 1.05;
+}
+.now-list span {
+  color: var(--mute);
+}
+#s3 {
+  padding-bottom: clamp(60px, 12vh, 120px);
+  min-height: 62vh;
+}
+@media (max-width: 900px) {
+  .stage .main {
+    padding-top: 8px;
+  }
+  .now-list li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #s3 {
+    min-height: 0;
+  }
+}
+
+.vid img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.vid-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .strip {
+    scroll-behavior: auto;
+  }
+}

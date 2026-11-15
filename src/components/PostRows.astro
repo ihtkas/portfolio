@@ -1,0 +1,28 @@
+---
+import type { Post } from '../lib/posts';
+
+interface Props {
+  posts: Post[];
+  /** Home layout: date and title only. Otherwise adds the kind marker and the dek. */
+  compact?: boolean | undefined;
+}
+
+const { posts, compact = false } = Astro.props;
+const month = (d: Date): string =>
+  d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+<ul class="rows">
+  {posts.map((post) => (
+    <li class={post.data.kind === 'life' ? 'life' : undefined}>
+      <a href={`/writing/${post.id}/`}>
+        {!compact && (
+          <span class:list={['mk', { ring: post.data.kind === 'life' }]} aria-hidden="true"></span>
+        )}
+        <time datetime={post.data.date.toISOString().slice(0, 10)}>{month(post.data.date)}</time>
+        <h3>{post.data.title}</h3>
+        {!compact && <span class="dek">{post.data.dek}</span>}
+      </a>
+    </li>
+  ))}
+</ul>
