@@ -1,0 +1,65 @@
+---
+import '../styles/fonts';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Footer from '../components/Footer.astro';
+import Header, { type NavKey } from '../components/Header.astro';
+import { site } from '../../site.config';
+
+interface Props {
+  title: string;
+  description: string;
+  current?: NavKey | undefined;
+  wide?: boolean | undefined;
+}
+
+const { title, description, current, wide = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-default.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {site.socials.rss && (
+      <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
+    )}
+    <script is:inline>
+      {
+        const root = document.documentElement;
+        root.classList.add('js');
+        try {
+          const t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') root.dataset.theme = t;
+        } catch {
+          // storage blocked: follow the system preference
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+    <Header current={current} />
+    <main id="main" class={wide ? 'wide' : undefined}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

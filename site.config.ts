@@ -2,6 +2,7 @@ import type { SiteConfig } from './src/lib/site';
 
 export const site: SiteConfig = {
   name: 'Sakthi Natesan',
+  mark: 'sakthibuilds',
   tagline: 'Sample tagline: replace with one line about what you do.',
   location: 'Bangalore',
   siteUrl: 'https://sakthibuilds.dev',

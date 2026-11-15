@@ -1,0 +1,26 @@
+---
+import { site } from '../../site.config';
+
+const year = new Date().getFullYear();
+const { github, linkedin, email, rss } = site.socials;
+---
+
+<footer class="foot">
+  <span>
+    &copy; {year} {site.name}
+  </span>
+  <nav aria-label="Elsewhere">
+    {github && (
+      <a href={github} rel="me">
+        GitHub
+      </a>
+    )}
+    {linkedin && (
+      <a href={linkedin} rel="me">
+        LinkedIn
+      </a>
+    )}
+    {email && <a href={`mailto:${email}`}>Email</a>}
+    {rss && <a href="/rss.xml">RSS</a>}
+  </nav>
+</footer>

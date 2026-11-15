@@ -5,6 +5,7 @@ export interface FeaturedRef {
 
 export interface SiteConfig {
   name: string;
+  mark: string;
   tagline: string;
   location: string;
   siteUrl: string;

@@ -1,0 +1,32 @@
+---
+import { site } from '../../site.config';
+import ThemeToggle from './ThemeToggle.astro';
+
+export type NavKey = 'home' | 'writing' | 'projects' | 'resume';
+
+interface Props {
+  current?: NavKey | undefined;
+}
+
+const { current } = Astro.props;
+const keyOf = (href: string): string => (href === '/' ? 'home' : href.replaceAll('/', ''));
+---
+
+<header class="bar">
+  <a class="mark" href="/">
+    {site.mark}
+    <i>.</i>
+  </a>
+  <nav aria-label="Site">
+    {site.nav.map((item) => (
+      <a
+        href={item.href}
+        class={item.href === '/' ? 'nav-home' : undefined}
+        aria-current={keyOf(item.href) === current ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    ))}
+    <ThemeToggle />
+  </nav>
+</header>
