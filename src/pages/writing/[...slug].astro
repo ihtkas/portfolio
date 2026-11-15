@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import JsonLd from '../../components/JsonLd.astro';
 import Base from '../../layouts/Base.astro';
+import { postMarkdownPath } from '../../lib/agents';
 import { neighbours, publishedPosts, readingMinutes } from '../../lib/posts';
 import { site } from '../../../site.config';
 
@@ -42,6 +43,7 @@ const posting = {
 
 <Base title={`${title} | ${site.name}`} description={dek} current="writing" ogType="article">
   <JsonLd slot="head" data={posting} />
+  <link slot="head" rel="alternate" type="text/markdown" href={postMarkdownPath(post.id)} />
   <article class="post">
     <a class="back" href="/writing/">
       &larr; All writing
