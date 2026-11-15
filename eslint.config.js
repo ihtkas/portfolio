@@ -25,4 +25,10 @@ export default defineConfig(
     files: ['scripts/**/*.mjs'],
     languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
   },
+  {
+    // Lighthouse CI reads a CommonJS config.
+    files: ['**/*.cjs'],
+    languageOptions: { globals: { module: 'writable', require: 'readonly' } },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
 );

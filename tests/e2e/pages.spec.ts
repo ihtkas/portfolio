@@ -1,40 +1,16 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { site } from '../../site.config';
+import { newestSlug, posts, projects } from './content';
 
 const siteUrl = (process.env['SITE_URL'] ?? site.siteUrl).replace(/\/$/, '');
 
-interface Entry {
-  id: string;
-  kind: string;
-  draft: boolean;
-  title: string;
-}
-
-function readEntries(dir: string): Entry[] {
-  return readdirSync(dir)
-    .filter((f) => /\.mdx?$/.test(f))
-    .map((f) => {
-      const text = readFileSync(`${dir}/${f}`, 'utf8');
-      const field = (name: string) =>
-        new RegExp(`^${name}:\\s*(.+)$`, 'm').exec(text)?.[1]?.replace(/^'|'$/g, '') ?? '';
-      return {
-        id: f.replace(/\.mdx?$/, ''),
-        kind: field('kind'),
-        draft: field('draft') === 'true',
-        title: field('title'),
-      };
-    });
-}
-
-const posts = readEntries('src/content/posts').filter((p) => !p.draft);
-const projects = readEntries('src/content/projects');
-const newestSlug = 'sample-engineering-post';
-const oldestSlug = 'sample-life-post';
-// dated between the other two, so it is the neighbour of both
-const middleSlug = 'sample-long-word-post';
+const olderOf = (i: number) => posts[i + 1]?.id;
+const newerOf = (i: number) => posts[i - 1]?.id;
+const years = (dates: string[]) => new Set(dates.map((d) => d.slice(0, 4))).size;
 
 test.describe('writing index', () => {
+  test.skip(posts.length === 0, 'needs at least one published post');
   test('filter counts match the data and filtering hides rows and empty years', async ({
     page,
   }) => {
@@ -53,8 +29,8 @@ test.describe('writing index', () => {
 
     await pill('Life').click();
     await expect(page.locator('.rows li:visible')).toHaveCount(life);
-    // sample posts fall in different years, so the other year group must hide
-    await expect(page.locator('.year:visible')).toHaveCount(1);
+    const lifeYears = years(posts.filter((p) => p.kind === 'life').map((p) => p.date));
+    await expect(page.locator('.year:visible')).toHaveCount(lifeYears);
 
     await pill('All').click();
     await expect(page.locator('.year:visible')).toHaveCount(await page.locator('.year').count());
@@ -68,29 +44,32 @@ test.describe('writing index', () => {
 });
 
 test.describe('post page', () => {
+  test.skip(posts.length === 0, 'needs at least one published post');
+
   test('has h1, reading time, tags and canonical', async ({ page }) => {
     await page.goto(`/writing/${newestSlug}/`);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('.meta')).toContainText(/\d+ min read/);
-    await expect(page.locator('.tags li')).not.toHaveCount(0);
+    await expect(page.locator('.tags li')).toHaveCount(posts[0]?.tags.length ?? 0);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       `${siteUrl}/writing/${newestSlug}/`,
     );
   });
 
-  test('the newest post has no Newer link and Older goes to the next slug', async ({ page }) => {
-    await page.goto(`/writing/${newestSlug}/`);
-    await expect(page.locator('.pager .newer')).toHaveCount(0);
-    await expect(page.locator('.pager .older')).toHaveAttribute('href', `/writing/${middleSlug}/`);
-  });
-
-  test('the oldest post has no Older link and Newer goes to the previous slug', async ({
-    page,
-  }) => {
-    await page.goto(`/writing/${oldestSlug}/`);
-    await expect(page.locator('.pager .older')).toHaveCount(0);
-    await expect(page.locator('.pager .newer')).toHaveAttribute('href', `/writing/${middleSlug}/`);
+  test('every post pager links to its date neighbours', async ({ page }) => {
+    test.skip(posts.length < 2, 'needs at least two published posts');
+    for (const [i, post] of posts.entries()) {
+      await page.goto(`/writing/${post.id}/`);
+      const newer = newerOf(i);
+      const older = olderOf(i);
+      const newerLink = page.locator('.pager .newer');
+      const olderLink = page.locator('.pager .older');
+      if (newer) await expect(newerLink).toHaveAttribute('href', `/writing/${newer}/`);
+      else await expect(newerLink).toHaveCount(0);
+      if (older) await expect(olderLink).toHaveAttribute('href', `/writing/${older}/`);
+      else await expect(olderLink).toHaveCount(0);
+    }
   });
 
   test('does not scroll sideways', async ({ page }) => {
@@ -114,6 +93,8 @@ test.describe('post page', () => {
 });
 
 test.describe('projects', () => {
+  test.skip(projects.length === 0, 'needs at least one project');
+
   test('filters work and counts match', async ({ page }) => {
     await page.goto('/projects/');
     const oss = projects.filter((p) => p.kind === 'oss').length;
@@ -126,7 +107,8 @@ test.describe('projects', () => {
 
     await pill('Open source').click();
     await expect(page.locator('.proj > li:visible')).toHaveCount(oss);
-    await expect(page.locator('.year:visible')).toHaveCount(1);
+    const ossSections = new Set(projects.filter((p) => p.kind === 'oss').map((p) => p.section));
+    await expect(page.locator('.year:visible')).toHaveCount(ossSections.size);
 
     await pill('At work').click();
     await expect(page.locator('.proj > li:visible')).toHaveCount(work);
@@ -135,8 +117,10 @@ test.describe('projects', () => {
 
   test('a project with video shows a facade', async ({ page }) => {
     await page.goto('/projects/');
-    await expect(page.locator('a.vid')).toHaveCount(1);
-    await expect(page.locator('a.vid')).toHaveAttribute('data-youtube', /.+/);
+    const withVideo = projects.filter((p) => p.youtubeId);
+    test.skip(withVideo.length === 0, 'needs a project with a video (the sample ships one)');
+    await expect(page.locator('a.vid')).toHaveCount(withVideo.length);
+    await expect(page.locator('a.vid').first()).toHaveAttribute('data-youtube', /.+/);
   });
 });
 
@@ -172,7 +156,7 @@ test.describe('feeds and SEO', () => {
     expect(xml).toContain('<rss');
     expect((xml.match(/<item>/g) ?? []).length).toBe(posts.length);
     expect((xml.match(/<\/item>/g) ?? []).length).toBe(posts.length);
-    expect(xml).toContain(`${siteUrl}/writing/${newestSlug}/`);
+    if (newestSlug) expect(xml).toContain(`${siteUrl}/writing/${newestSlug}/`);
   });
 
   test('sitemap-index.xml exists and robots.txt points at it', async ({ request }) => {

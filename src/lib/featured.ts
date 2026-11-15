@@ -13,11 +13,14 @@ export function resolveFeatured(
   return refs.map((ref) => {
     if (ref.kind === 'post') {
       const entry = posts.find((p) => p.id === ref.slug);
-      if (!entry) throw new Error(`site.featured: no post with slug "${ref.slug}"`);
+      if (!entry)
+        throw new Error(
+          `site.featured: no published post with slug "${ref.slug}" (missing or draft)`,
+        );
       return { kind: 'post', entry };
     }
     const entry = projects.find((p) => p.id === ref.slug);
-    if (!entry) throw new Error(`site.featured: no project with slug "${ref.slug}"`);
+    if (!entry) throw new Error(`site.featured: no project with slug "${ref.slug}" (missing)`);
     return { kind: 'project', entry };
   });
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { resolveFeatured } from './featured';
-import type { Post } from './posts';
-import type { Project } from './projects';
+import { resolveFeatured } from '../../src/lib/featured';
+import type { Post } from '../../src/lib/posts';
+import type { Project } from '../../src/lib/projects';
 
 const post = { id: 'a-post' } as Post;
 const project = { id: 'a-project' } as Project;
@@ -21,10 +21,10 @@ describe('resolveFeatured', () => {
 
   it('throws a clear error for an unknown slug', () => {
     expect(() => resolveFeatured([{ kind: 'post', slug: 'nope' }], [post], [project])).toThrow(
-      'site.featured: no post with slug "nope"',
+      'site.featured: no published post with slug "nope" (missing or draft)',
     );
     expect(() => resolveFeatured([{ kind: 'project', slug: 'nope' }], [post], [project])).toThrow(
-      'site.featured: no project with slug "nope"',
+      'site.featured: no project with slug "nope" (missing)',
     );
   });
 });

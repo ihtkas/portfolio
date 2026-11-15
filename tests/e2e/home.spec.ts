@@ -1,19 +1,25 @@
 import { expect, test } from '@playwright/test';
+import { site } from '../../site.config';
+import { posts, projects } from './content';
+
+// The first featured project that has a video is the first `a.vid` on the home page.
+const featuredVideoId = site.featured
+  .flatMap((ref) => (ref.kind === 'project' ? [projects.find((p) => p.id === ref.slug)] : []))
+  .find((p) => p?.youtubeId)?.youtubeId;
 
 test.describe('home page', () => {
   test('has a visually hidden h1 with the owner name', async ({ page }) => {
     await page.goto('/');
     const h1 = page.locator('h1');
     await expect(h1).toHaveCount(1);
-    await expect(h1).toHaveText('Sakthi Natesan');
+    await expect(h1).toHaveText(site.name);
     await expect(h1).toHaveClass(/sr/);
   });
 
   test('latest writing shows at most 3 posts and links to all writing', async ({ page }) => {
     await page.goto('/');
     const rows = page.locator('#s3 .rows li');
-    expect(await rows.count()).toBeGreaterThan(0);
-    expect(await rows.count()).toBeLessThanOrEqual(3);
+    expect(await rows.count()).toBe(Math.min(posts.length, 3));
     await expect(page.getByRole('link', { name: 'All writing' })).toHaveAttribute(
       'href',
       '/writing/',
@@ -34,6 +40,7 @@ test.describe('home page', () => {
 test.describe('featured slideshow', () => {
   test.beforeEach(({ javaScriptEnabled }) => {
     test.skip(!javaScriptEnabled, 'needs JavaScript');
+    test.skip(site.featured.length < 2, 'needs at least two featured items');
   });
 
   const dots = (page: import('@playwright/test').Page) => page.locator('.reel .dots button');
@@ -80,6 +87,7 @@ test.describe('featured slideshow', () => {
 test.describe('slideshow without JavaScript', () => {
   test('hides the controls but keeps the slides visible', async ({ page, javaScriptEnabled }) => {
     test.skip(javaScriptEnabled, 'nojs only');
+    test.skip(site.featured.length === 0, 'needs a featured item');
     await page.goto('/');
     await expect(page.locator('.reel .ctrl')).toBeHidden();
     await expect(page.locator('.reel .slide').first()).toBeVisible();
@@ -99,15 +107,17 @@ test.describe('video facade', () => {
 
   test('without JS the facade is a plain link to YouTube', async ({ page, javaScriptEnabled }) => {
     test.skip(javaScriptEnabled, 'nojs only');
+    test.skip(!featuredVideoId, 'needs a featured project with a video (the sample ships one)');
     await page.goto('/');
     await expect(page.locator('a.vid').first()).toHaveAttribute(
       'href',
-      'https://www.youtube.com/watch?v=sample00000',
+      `https://www.youtube.com/watch?v=${featuredVideoId}`,
     );
   });
 
   test('clicking adds a youtube-nocookie iframe', async ({ page, javaScriptEnabled }) => {
     test.skip(!javaScriptEnabled, 'needs JavaScript');
+    test.skip(!featuredVideoId, 'needs a featured project with a video (the sample ships one)');
     await page.route('**/*youtube*', (r) => r.abort());
     await page.goto('/');
     await page.locator('a.vid').first().click();
@@ -115,6 +125,7 @@ test.describe('video facade', () => {
     await expect(frame).toHaveCount(1);
     const src = (await frame.getAttribute('src')) ?? '';
     expect(new URL(src).host).toBe('www.youtube-nocookie.com');
+    expect(src).toContain(`/embed/${featuredVideoId}`);
     expect(src).toContain('autoplay=1');
   });
 });
