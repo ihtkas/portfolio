@@ -3,8 +3,10 @@ import { getCollection } from 'astro:content';
 import FilterPills from '../../components/FilterPills.astro';
 import PostRows from '../../components/PostRows.astro';
 import YearGroup from '../../components/YearGroup.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import Base from '../../layouts/Base.astro';
 import { groupByYear, publishedPosts } from '../../lib/posts';
+import { blog, ids } from '../../lib/structured-data';
 import { site } from '../../../site.config';
 
 const posts = publishedPosts(await getCollection('posts'));
@@ -18,6 +20,7 @@ const options = [
 ---
 
 <Base title={`Writing | ${site.name}`} description={site.pages.writing.lede} current="writing" wide>
+  <JsonLd slot="head" data={blog(site, posts, ids(Astro.site ?? site.siteUrl))} />
   <header class="intro">
     <h1 class="title">Writing</h1>
     <p class="lede">{site.pages.writing.lede}</p>

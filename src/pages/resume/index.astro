@@ -1,7 +1,9 @@
 ---
+import JsonLd from '../../components/JsonLd.astro';
 import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
 import { loadResume } from '../../lib/resume';
+import { ids, profilePage } from '../../lib/structured-data';
 import { site } from '../../../site.config';
 
 const resume = loadResume();
@@ -13,6 +15,7 @@ const resume = loadResume();
   current="resume"
   wide
 >
+  <JsonLd slot="head" data={profilePage(site, resume, ids(Astro.site ?? site.siteUrl))} />
   <header class="intro split">
     <div>
       <h1 class="title">Resume</h1>

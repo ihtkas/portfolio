@@ -4,6 +4,7 @@ import type { GetStaticPaths } from 'astro';
 import JsonLd from '../../components/JsonLd.astro';
 import Base from '../../layouts/Base.astro';
 import { postMarkdownPath } from '../../lib/agents';
+import { blogPosting, ids } from '../../lib/structured-data';
 import { neighbours, publishedPosts, readingMinutes } from '../../lib/posts';
 import { site } from '../../../site.config';
 
@@ -26,22 +27,17 @@ const long = date.toLocaleDateString('en-US', {
   year: 'numeric',
   timeZone: 'UTC',
 });
-const url = new URL(`/writing/${post.id}/`, Astro.site).href;
-const posting = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: title,
-  description: dek,
-  datePublished: day(date),
-  ...(updated && { dateModified: day(updated) }),
-  author: { '@type': 'Person', name: site.name, url: new URL('/', Astro.site).href },
-  image: new URL('/og-default.png', Astro.site).href,
-  url,
-  mainEntityOfPage: url,
-};
+const posting = blogPosting(site, post, ids(Astro.site ?? site.siteUrl));
+const article = { published: date, modified: updated ?? date, tags };
 ---
 
-<Base title={`${title} | ${site.name}`} description={dek} current="writing" ogType="article">
+<Base
+  title={`${title} | ${site.name}`}
+  description={dek}
+  current="writing"
+  ogType="article"
+  article={article}
+>
   <JsonLd slot="head" data={posting} />
   <link slot="head" rel="alternate" type="text/markdown" href={postMarkdownPath(post.id)} />
   <article class="post">
