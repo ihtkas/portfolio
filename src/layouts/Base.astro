@@ -15,9 +15,17 @@ interface Props {
   current?: NavKey | undefined;
   wide?: boolean | undefined;
   noindex?: boolean | undefined;
+  ogType?: 'website' | 'article' | undefined;
 }
 
-const { title, description, current, wide = false, noindex = false } = Astro.props;
+const {
+  title,
+  description,
+  current,
+  wide = false,
+  noindex = false,
+  ogType = 'website',
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og-default.png', Astro.site);
 ---
@@ -34,7 +42,7 @@ const ogImage = new URL('/og-default.png', Astro.site);
     <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

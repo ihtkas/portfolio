@@ -10,4 +10,4 @@ links:
   github: https://github.com/ihtkas/portfolio
 ---
 
-This is sample content to be replaced. Describe the project, its goals and what you learned.
+Only the frontmatter above is used. The Markdown body is not rendered, so you can leave it empty.

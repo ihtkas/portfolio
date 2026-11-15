@@ -9,6 +9,7 @@ document.addEventListener('click', (event) => {
   const frame = document.createElement('iframe');
   frame.className = 'vid-frame';
   frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1`;
+  frame.referrerPolicy = 'strict-origin-when-cross-origin';
   frame.allow = 'autoplay; encrypted-media';
   frame.allowFullscreen = true;
   frame.title = link.dataset['title'] ?? 'Video';

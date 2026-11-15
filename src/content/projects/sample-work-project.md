@@ -13,4 +13,4 @@ video:
   poster: ../../assets/posters/sample.png
 ---
 
-This is sample content to be replaced. Describe the project and embed or link a demo video.
+Only the frontmatter above is used. The Markdown body is not rendered, so you can leave it empty.
