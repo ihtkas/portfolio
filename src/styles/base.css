@@ -1464,7 +1464,8 @@ html:not(.js) .ctrl {
 .prose > p:first-child {
   margin-top: 30px;
 }
-.prose > p:first-child::first-letter {
+/* No drop cap when the post opens with a bold label such as "TL;DR". */
+.prose > p:first-child:not(:has(> strong:first-child))::first-letter {
   font-family: var(--display);
   font-weight: 900;
   float: left;
