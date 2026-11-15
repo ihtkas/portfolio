@@ -13,10 +13,7 @@ const keyOf = (href: string): string => (href === '/' ? 'home' : href.replaceAll
 ---
 
 <header class="bar">
-  <a class="mark" href="/">
-    {site.mark}
-    <i>.</i>
-  </a>
+  <a class="mark" href="/">{site.mark}</a>
   <nav aria-label="Site">
     {site.nav.map((item) => (
       <a

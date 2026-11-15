@@ -2,7 +2,7 @@ import type { SiteConfig } from './src/lib/site';
 
 export const site: SiteConfig = {
   name: 'Sakthi Natesan',
-  mark: 'sakthibuilds',
+  mark: 'Sakthi Natesan',
   tagline: 'Engineering manager building software with AI agents.',
   location: 'Bangalore',
   siteUrl: 'https://sakthibuilds.dev',
