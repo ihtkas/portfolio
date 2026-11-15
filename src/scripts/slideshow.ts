@@ -14,16 +14,23 @@ if (reel && track) {
   let settle: number | undefined;
   let hovered = false;
   let focused = false;
+  let bar: Animation | undefined;
 
-  reel.style.setProperty('--dur', `${DURATION}ms`);
-
+  // Restarts the timer and the current dot's progress bar. The bar is a transform animation on the
+  // dot's ::after, so it runs on the compositor and restarting it never forces a layout.
   const restart = (): void => {
     window.clearTimeout(timer);
-    reel.classList.remove('playing');
-    void reel.offsetWidth; // restart the progress animation
-    const idle = motion.matches || hovered || focused || document.hidden || !reel.offsetParent;
+    bar?.cancel();
+    bar = undefined;
+    const hidden = document.hidden || !(reel.checkVisibility?.() ?? true);
+    const idle = motion.matches || hovered || focused || hidden;
     if (idle || reel.querySelector('iframe') || slideCount < 2) return;
-    reel.classList.add('playing');
+    bar = dots[index]?.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+      duration: DURATION,
+      easing: 'linear',
+      fill: 'forwards',
+      pseudoElement: '::after',
+    });
     timer = window.setTimeout(() => go(index + 1), DURATION);
   };
 

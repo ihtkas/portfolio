@@ -8,6 +8,8 @@ import Slideshow from '../components/Slideshow.astro';
 import Social from '../components/Social.astro';
 import { resolveFeatured } from '../lib/featured';
 import { publishedPosts } from '../lib/posts';
+import { loadResume } from '../lib/resume';
+import { homeGraph, ids } from '../lib/structured-data';
 import { site } from '../../site.config';
 
 const posts = publishedPosts(await getCollection('posts'));
@@ -19,17 +21,11 @@ const chapters = [
   { id: 's2', label: 'Now' },
   { id: 's3', label: 'Writing' },
 ];
-const person = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: site.name,
-  url: new URL('/', Astro.site).href,
-  sameAs: [site.socials.github, site.socials.linkedin].filter((u): u is string => Boolean(u)),
-};
+const graph = homeGraph(site, loadResume(), ids(Astro.site ?? site.siteUrl));
 ---
 
 <Base title={site.name} description={site.description} current="home">
-  <JsonLd slot="head" data={person} />
+  <JsonLd slot="head" data={graph} />
   <div class="stage">
     <aside class="side" aria-label="Introduction">
       <h1 class="sr">{site.name}</h1>

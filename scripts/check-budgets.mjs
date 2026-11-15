@@ -5,7 +5,8 @@ import { join, posix, relative, sep } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const KB = 1024;
-const limits = { homeJs: 8 * KB, otherJs: 5 * KB, css: 20 * KB };
+// otherJs was 5 KB; raised to 6 KB for Astro prefetch (about 0.75 KB), which makes navigation instant.
+const limits = { homeJs: 8 * KB, otherJs: 6 * KB, css: 20 * KB };
 
 const dist = process.argv[2] ?? 'dist';
 

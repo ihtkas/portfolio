@@ -23,9 +23,9 @@
   --sun-o: 1;
   --moon-o: 0;
 
-  --display: 'Big Shoulders Display Variable', 'Big Shoulders Display', 'Arial Narrow', sans-serif;
-  --serif: 'Newsreader Variable', 'Newsreader', Georgia, serif;
-  --mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  --display: 'Big Shoulders Display Variable', 'Big Shoulders fallback', sans-serif;
+  --serif: 'Newsreader Variable', 'Newsreader fallback', Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --gutter: clamp(16px, 4vw, 56px);
   color-scheme: dark;
 }

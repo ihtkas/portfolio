@@ -1080,27 +1080,21 @@ html:not(.js) .switch {
   border-radius: 2px;
   background: var(--rule);
 }
+/* The progress bar scales on the compositor; slideshow.ts animates it while the reel plays. */
 .dots button::after {
   content: '';
   position: absolute;
   left: 0;
+  right: 0;
   top: 9px;
   height: 2px;
   border-radius: 2px;
   background: var(--lamp);
-  width: 0;
+  transform: scaleX(0);
+  transform-origin: left;
 }
 .dots button[aria-current='true']::after {
-  width: 100%;
-}
-.reel.playing .dots button[aria-current='true']::after {
-  width: 0;
-  animation: fill var(--dur, 7s) linear forwards;
-}
-@keyframes fill {
-  to {
-    width: 100%;
-  }
+  transform: scaleX(1);
 }
 .ctrl .nav {
   display: flex;
@@ -1470,7 +1464,8 @@ html:not(.js) .ctrl {
 .prose > p:first-child {
   margin-top: 30px;
 }
-.prose > p:first-child::first-letter {
+/* No drop cap when the post opens with a bold label such as "TL;DR". */
+.prose > p:first-child:not(:has(> strong:first-child))::first-letter {
   font-family: var(--display);
   font-weight: 900;
   float: left;

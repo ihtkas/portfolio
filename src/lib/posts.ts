@@ -4,9 +4,12 @@ export type Post = CollectionEntry<'posts'>;
 
 const WORDS_PER_MINUTE = 200;
 
+export function readingWords(markdown: string): number {
+  return markdown.trim().split(/\s+/).filter(Boolean).length;
+}
+
 export function readingMinutes(markdown: string): number {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
+  return Math.max(1, Math.ceil(readingWords(markdown) / WORDS_PER_MINUTE));
 }
 
 const newestFirst = (posts: Post[]): Post[] =>

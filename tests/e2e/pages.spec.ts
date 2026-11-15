@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { site } from '../../site.config';
 import { newestSlug, posts, projects } from './content';
 
@@ -88,7 +88,13 @@ test.describe('post page', () => {
     expect(data['@type']).toBe('BlogPosting');
     expect(data['url']).toBe(`${siteUrl}/writing/${newestSlug}/`);
     expect(data['headline']).toBeTruthy();
-    expect(data['datePublished']).toBeTruthy();
+    expect(data['datePublished']).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
+    expect(data['dateModified']).toBeTruthy();
+    expect((data['author'] as Record<string, unknown>)['@id']).toBe(`${siteUrl}/#person`);
+    await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute(
+      'content',
+      String(data['datePublished']),
+    );
   });
 });
 
@@ -164,21 +170,94 @@ test.describe('feeds and SEO', () => {
     if (newestSlug) expect(xml).toContain(`${siteUrl}/writing/${newestSlug}/`);
   });
 
+  test('rss.xml carries the full text, language and a self link', async ({ request }) => {
+    const xml = await (await request.get('/rss.xml')).text();
+    expect((xml.match(/<content:encoded>/g) ?? []).length).toBe(posts.length);
+    expect(xml).toContain('<language>en</language>');
+    expect(xml).toContain(`<atom:link href="${siteUrl}/rss.xml" rel="self"`);
+    if (posts.length > 0) expect(xml).toContain('<lastBuildDate>');
+    expect(xml).not.toMatch(/&lt;script/);
+  });
+
   test('sitemap-index.xml exists and robots.txt points at it', async ({ request }) => {
     expect((await request.get('/sitemap-index.xml')).ok()).toBe(true);
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toContain(`Sitemap: ${siteUrl}/sitemap-index.xml`);
+    expect(robots).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=yes');
   });
 
-  test('the home page has Person JSON-LD', async ({ page }) => {
-    await page.goto('/');
+  test('the sitemap has a lastmod for every post', async ({ request }) => {
+    const xml = await (await request.get('/sitemap-0.xml')).text();
+    for (const p of posts) {
+      expect(xml).toMatch(
+        new RegExp(`<loc>${siteUrl}/writing/${p.id}/</loc><lastmod>\\d{4}-\\d{2}-\\d{2}T`),
+      );
+    }
+  });
+
+  test('llms.txt has an H1, a summary and links each post as Markdown', async ({ request }) => {
+    const res = await request.get('/llms.txt');
+    expect(res.ok()).toBe(true);
+    const text = await res.text();
+    expect(text.startsWith(`# ${site.name}\n\n> `)).toBe(true);
+    for (const p of posts) expect(text).toContain(`(${siteUrl}/writing/${p.id}.md)`);
+  });
+
+  test('each post links a Markdown copy that serves its text', async ({ page, request }) => {
+    test.skip(!newestSlug, 'needs at least one published post');
+    await page.goto(`/writing/${newestSlug}/`);
+    const href = await page
+      .locator('link[rel="alternate"][type="text/markdown"]')
+      .getAttribute('href');
+    expect(href).toBe(`/writing/${newestSlug}.md`);
+    const md = await (await request.get(href ?? '')).text();
+    expect(md.startsWith('---\ntitle: ')).toBe(true);
+    expect(md).toContain(`canonical: "${siteUrl}/writing/${newestSlug}/"`);
+  });
+
+  const jsonLd = async (page: Page, path: string) => {
+    await page.goto(path);
     const raw = await page.locator('script[type="application/ld+json"]').first().textContent();
-    const data = JSON.parse(raw ?? '{}') as Record<string, unknown>;
-    expect(data['@type']).toBe('Person');
-    expect(data['name']).toBe(site.name);
-    expect(data['url']).toBe(`${siteUrl}/`);
-    expect(data['sameAs']).toEqual(
+    return JSON.parse(raw ?? '{}') as Record<string, unknown>;
+  };
+
+  test('the home page has Person and WebSite JSON-LD', async ({ page }) => {
+    const graph = (await jsonLd(page, '/'))['@graph'] as Record<string, unknown>[];
+    const person = graph.find((n) => n['@type'] === 'Person') ?? {};
+    const website = graph.find((n) => n['@type'] === 'WebSite') ?? {};
+    expect(person['@id']).toBe(`${siteUrl}/#person`);
+    expect(person['name']).toBe(site.name);
+    expect(person['url']).toBe(`${siteUrl}/`);
+    expect(person['jobTitle']).toBeTruthy();
+    expect(person['sameAs']).toEqual(
       expect.arrayContaining([site.socials.github, site.socials.linkedin]),
+    );
+    expect(website['url']).toBe(`${siteUrl}/`);
+    expect(website['publisher']).toEqual({ '@id': `${siteUrl}/#person` });
+  });
+
+  test('/resume/ is a ProfilePage and /writing/ is a Blog', async ({ page }) => {
+    const profile = await jsonLd(page, '/resume/');
+    expect(profile['@type']).toBe('ProfilePage');
+    expect((profile['mainEntity'] as Record<string, unknown>)['@id']).toBe(`${siteUrl}/#person`);
+    const blog = await jsonLd(page, '/writing/');
+    expect(blog['@type']).toBe('Blog');
+    expect(blog['blogPost']).toHaveLength(posts.length);
+  });
+
+  test('the OG image has its size and alt text', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute(
+      'content',
+      '1200',
+    );
+    await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute(
+      'content',
+      '630',
+    );
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+      'content',
+      site.name,
     );
   });
 
