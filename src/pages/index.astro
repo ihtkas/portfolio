@@ -70,7 +70,11 @@ const person = {
           <span class="n">03</span>
           <h2 id="h-writing">Writing</h2>
         </div>
-        <PostRows posts={latest} compact />
+        {latest.length > 0 ? (
+          <PostRows posts={latest} compact />
+        ) : (
+          <p class="empty">No posts yet.</p>
+        )}
         <a class="more" href="/writing/">
           All writing
         </a>

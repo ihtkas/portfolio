@@ -605,6 +605,10 @@ body {
   line-height: 1.15;
   color: var(--ink);
 }
+.empty {
+  margin-top: 24px;
+  color: var(--ink);
+}
 .filter {
   margin-top: clamp(22px, 4vh, 34px);
   border: 0;

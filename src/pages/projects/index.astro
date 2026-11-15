@@ -5,6 +5,7 @@ import VideoFacade from '../../components/VideoFacade.astro';
 import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
 import { groupProjects } from '../../lib/projects';
+import { site } from '../../../site.config';
 
 const projects = await getCollection('projects');
 const groups = groupProjects(projects);
@@ -14,28 +15,24 @@ const options = [
   { id: 'oss', label: 'Open source', count: oss, marker: 'dot' as const },
   { id: 'work', label: 'At work', count: projects.length - oss, marker: 'ring' as const },
 ];
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-import { site } from '../../../site.config';
 ---
 
 <Base
   title={`Projects | ${site.name}`}
-  description={`Things ${site.name} is building and has built, with code, demos and write-ups.`}
+  description={site.pages.projects.lede}
   current="projects"
   wide
 >
   <header class="intro">
     <h1 class="title">Projects</h1>
-    <p class="lede">
-      What I am building in the open, and the systems I built at work. Code, demos and the write-ups
-      behind them.
-    </p>
-    <FilterPills name="pf" options={options} />
+    <p class="lede">{site.pages.projects.lede}</p>
+    {projects.length > 0 && <FilterPills name="pf" options={options} />}
   </header>
 
+  {projects.length === 0 && <p class="empty">No projects yet.</p>}
   <div class="years">
-    {groups.map((g) => (
-      <YearGroup id={`g-${slug(g.section)}`} heading={g.section}>
+    {groups.map((g, i) => (
+      <YearGroup id={`g-${i}`} heading={g.section}>
         <ul class="proj">
           {g.items.map(({ data }) => (
             <li class={data.kind === 'oss' ? 'oss' : undefined}>

@@ -24,6 +24,10 @@ export const site: SiteConfig = {
     { title: 'Reading', line: 'Sample: what you are reading right now.' },
     { title: 'Learning', line: 'Sample: what you are learning right now.' },
   ],
+  pages: {
+    writing: { lede: 'Sample lede: replace with one line about what you write.' },
+    projects: { lede: 'Sample lede: replace with one line about the projects you list.' },
+  },
   featured: [
     { kind: 'post', slug: 'sample-engineering-post' },
     { kind: 'project', slug: 'sample-oss-project' },

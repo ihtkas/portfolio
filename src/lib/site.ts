@@ -20,4 +20,9 @@ export interface SiteConfig {
   about: string;
   now: { title: string; line: string }[];
   featured: FeaturedRef[];
+  /** Intro lines shown under the page titles. */
+  pages: {
+    writing: { lede: string };
+    projects: { lede: string };
+  };
 }

@@ -5,7 +5,6 @@ import { loadResume } from '../../lib/resume';
 import { site } from '../../../site.config';
 
 const resume = loadResume();
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 
 <Base
@@ -57,8 +56,8 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   </header>
 
   <div class="years">
-    {resume.orgs.map((org) => (
-      <YearGroup id={`r-${slug(org.name)}`} heading={org.name} sub={org.period}>
+    {resume.orgs.map((org, i) => (
+      <YearGroup id={`r-${i}`} heading={org.name} sub={org.period}>
         <div>
           {org.roles.map((role) => (
             <article class="role">

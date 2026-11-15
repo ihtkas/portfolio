@@ -34,12 +34,13 @@ const posting = {
   datePublished: day(date),
   ...(updated && { dateModified: day(updated) }),
   author: { '@type': 'Person', name: site.name, url: new URL('/', Astro.site).href },
+  image: new URL('/og-default.png', Astro.site).href,
   url,
   mainEntityOfPage: url,
 };
 ---
 
-<Base title={`${title} | ${site.name}`} description={dek} current="writing">
+<Base title={`${title} | ${site.name}`} description={dek} current="writing" ogType="article">
   <JsonLd slot="head" data={posting} />
   <article class="post">
     <a class="back" href="/writing/">

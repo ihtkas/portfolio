@@ -5,6 +5,7 @@ import PostRows from '../../components/PostRows.astro';
 import YearGroup from '../../components/YearGroup.astro';
 import Base from '../../layouts/Base.astro';
 import { groupByYear, publishedPosts } from '../../lib/posts';
+import { site } from '../../../site.config';
 
 const posts = publishedPosts(await getCollection('posts'));
 const years = groupByYear(posts);
@@ -14,20 +15,15 @@ const options = [
   { id: 'eng', label: 'Engineering', count: count('engineering'), marker: 'dot' as const },
   { id: 'life', label: 'Life', count: count('life'), marker: 'ring' as const },
 ];
-import { site } from '../../../site.config';
 ---
 
-<Base
-  title={`Writing | ${site.name}`}
-  description="Notes on systems, teams and life off the keyboard."
-  current="writing"
-  wide
->
+<Base title={`Writing | ${site.name}`} description={site.pages.writing.lede} current="writing" wide>
   <header class="intro">
     <h1 class="title">Writing</h1>
-    <p class="lede">Notes on systems, teams and life off the keyboard.</p>
-    <FilterPills name="f" options={options} />
+    <p class="lede">{site.pages.writing.lede}</p>
+    {posts.length > 0 && <FilterPills name="f" options={options} />}
   </header>
+  {posts.length === 0 && <p class="empty">No posts yet.</p>}
   <div class="years">
     {years.map((g) => (
       <YearGroup id={`y${g.year}`} heading={String(g.year)}>
