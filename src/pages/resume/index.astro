@@ -20,16 +20,23 @@ const resume = loadResume();
         <b>{site.name}</b>, {site.location}
       </p>
       <p class="lede summary">{resume.summary}</p>
-      {resume.pdf && (
-        <div class="btns">
+      <div class="btns">
+        {resume.pdf ? (
           <a class="btn solid" href={resume.pdf} download>
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path d="M7 1h2v7.6l2.6-2.6 1.4 1.4L8 12.4 3 7.4 4.4 6 7 8.6zM2 13h12v2H2z" />
             </svg>
             Download PDF
           </a>
-        </div>
-      )}
+        ) : (
+          <button type="button" class="btn solid" data-print={`${site.name} Resume`}>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M7 1h2v7.6l2.6-2.6 1.4 1.4L8 12.4 3 7.4 4.4 6 7 8.6zM2 13h12v2H2z" />
+            </svg>
+            Download PDF
+          </button>
+        )}
+      </div>
     </div>
     <aside class="facts" aria-label="Skills and education">
       <div>
@@ -78,3 +85,15 @@ const resume = loadResume();
     ))}
   </div>
 </Base>
+
+<script>
+  // Opens the browser's print dialog ("Save as PDF"). The print stylesheet in base.css
+  // turns the page into a plain document. The title becomes the suggested file name.
+  const button = document.querySelector<HTMLButtonElement>('[data-print]');
+  button?.addEventListener('click', () => {
+    const previous = document.title;
+    document.title = button.dataset.print ?? previous;
+    window.addEventListener('afterprint', () => (document.title = previous), { once: true });
+    window.print();
+  });
+</script>

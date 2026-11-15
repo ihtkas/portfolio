@@ -1593,3 +1593,78 @@ html:not(.js) .ctrl {
 .intro h2 {
   overflow-wrap: anywhere;
 }
+
+/* ---------- print: a plain, light A4 document (resume "Download PDF", or Ctrl/Cmd+P anywhere) ---------- */
+html:not(.js) [data-print] {
+  display: none;
+}
+@page {
+  size: A4;
+  margin: 14mm 16mm;
+}
+@media print {
+  :root,
+  :root[data-theme] {
+    --bg: #fff;
+    --raise: #fff;
+    --rule: #c9c9c9;
+    --ink: #111;
+    --mute: #444;
+    --lamp: #7a3a06;
+    --lamp-hot: #7a3a06;
+    --glow: transparent;
+    --name-a: #111;
+    --name-b: #111;
+    --name-c: #111;
+    --grain-o: 0;
+    color-scheme: light;
+  }
+  body {
+    background: #fff;
+    color: #111;
+    font-size: 11pt;
+  }
+  body::after,
+  .side::before,
+  .intro::before,
+  .bar,
+  .bfx,
+  .foot,
+  .btns,
+  .switch {
+    display: none !important;
+  }
+  .wide {
+    padding: 0;
+    max-width: none;
+  }
+  .title {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #111;
+    font-size: 34pt;
+  }
+  .facts {
+    background: none;
+    border-color: var(--rule);
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .role,
+  .facts,
+  .year h2 {
+    break-inside: avoid;
+  }
+  .year h2 {
+    break-after: avoid;
+    color: #111;
+    -webkit-text-stroke: 0;
+  }
+  * {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+}
