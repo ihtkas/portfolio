@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, deploy/cloudflare] # TEMP: deploy/cloudflare only to validate the deploy job
+    branches: [main]
   pull_request:
 
 permissions:
@@ -17,8 +17,6 @@ env:
 
 jobs:
   build-test:
-    # TEMP: skipped on the deploy/cloudflare validation branch so the deploy job runs alone
-    if: github.ref != 'refs/heads/deploy/cloudflare'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -75,7 +73,7 @@ jobs:
 
   # Runs only for pushes to main, that is, after a PR is merged.
   deploy:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/deploy/cloudflare') # TEMP
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # No `needs`: PRs cannot merge into main until build-test and lighthouse pass,
     # so the deploy after a merge runs straight away instead of re-running them.
     runs-on: ubuntu-latest
