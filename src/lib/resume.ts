@@ -19,7 +19,7 @@ export const resumeSchema = z.object({
       ),
     }),
   ),
-  pdf: z.string(),
+  pdf: z.string().optional(),
 });
 
 export type Resume = z.infer<typeof resumeSchema>;

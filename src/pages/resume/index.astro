@@ -20,14 +20,16 @@ const resume = loadResume();
         <b>{site.name}</b>, {site.location}
       </p>
       <p class="lede">{resume.summary}</p>
-      <div class="btns">
-        <a class="btn solid" href={resume.pdf} download>
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M7 1h2v7.6l2.6-2.6 1.4 1.4L8 12.4 3 7.4 4.4 6 7 8.6zM2 13h12v2H2z" />
-          </svg>
-          Download PDF
-        </a>
-      </div>
+      {resume.pdf && (
+        <div class="btns">
+          <a class="btn solid" href={resume.pdf} download>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M7 1h2v7.6l2.6-2.6 1.4 1.4L8 12.4 3 7.4 4.4 6 7 8.6zM2 13h12v2H2z" />
+            </svg>
+            Download PDF
+          </a>
+        </div>
+      )}
     </div>
     <aside class="facts" aria-label="Skills and education">
       <div>
