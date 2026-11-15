@@ -1,7 +1,8 @@
 # portfolio
 
 A fast, static personal portfolio site built with Astro 7: posts, projects, a resume page and a
-dark/light theme. No analytics, no third-party requests on page load, self-hosted fonts.
+dark/light theme. The code ships no analytics and makes no third-party requests on page load, and the fonts
+are self-hosted. It also builds an `llms.txt`, a Markdown copy of each post and a full-text RSS feed.
 
 ## Quick start
 
@@ -36,6 +37,11 @@ Without `task`, the same checks run as `pnpm check`, `pnpm test`, `pnpm e2e` and
 
    To host elsewhere, delete `wrangler.jsonc` and the `deploy` job.
 
+7. `public/_headers` sets the security headers, including a CSP whose script hashes the build fills in.
+   If you add a third-party script, frame or image, add its origin there. The two `cloudflareinsights`
+   origins are for Cloudflare Web Analytics; remove them if you do not use it.
+8. `src/pages/robots.txt.ts` allows every crawler, AI crawlers included. Change it if you want otherwise.
+
 Components read only from `site.config.ts`, `src/content/`, `src/data/` and `public/`. The schemas fail the
 build with a clear message if a field is missing or invalid. A featured slug that is missing or a draft also
 fails the build.
@@ -58,7 +64,12 @@ Notes:
 - **Playwright is pinned to exactly 1.63.0.** Each version needs one specific browser build, so it is not
   allowed to drift.
 - All other dependencies are pinned exactly, and the lockfile is committed.
-- No Cloudflare-only features and no adapter. Where to host is a separate decision.
+- No Cloudflare-only features and no adapter in the code. Where to host is a separate decision. The
+  owner's own deployment uses Cloudflare Web Analytics (injected at the edge), "Always Use HTTPS" and a
+  `www` to apex redirect, all set in the Cloudflare dashboard. A fork gets none of them unless it turns them
+  on.
+- Metric-matched fallback fonts keep the page from reflowing when the web fonts arrive. If you change the
+  fonts, regenerate them with `scripts/font-fallbacks.py` (see the comment at its top).
 
 ## Licence
 
