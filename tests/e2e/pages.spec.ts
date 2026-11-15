@@ -127,6 +127,7 @@ test.describe('projects', () => {
 test.describe('resume', () => {
   test('shows every role, the skills and education panel, and a PDF link', async ({ page }) => {
     const resume = JSON.parse(readFileSync('src/data/resume.json', 'utf8')) as {
+      pdf?: string;
       orgs: { roles: { title: string }[] }[];
       education: { school: string }[];
       skills: Record<string, string[]>;
@@ -142,8 +143,12 @@ test.describe('resume', () => {
     for (const group of Object.keys(resume.skills)) await expect(panel).toContainText(group);
     for (const e of resume.education) await expect(panel).toContainText(e.school);
     const pdf = page.getByRole('link', { name: /download pdf/i });
-    await expect(pdf).toHaveAttribute('href', '/resume.pdf');
-    await expect(pdf).toHaveAttribute('download', '');
+    if (resume.pdf) {
+      await expect(pdf).toHaveAttribute('href', resume.pdf);
+      await expect(pdf).toHaveAttribute('download', '');
+    } else {
+      await expect(pdf).toHaveCount(0);
+    }
   });
 });
 
@@ -187,10 +192,15 @@ test.describe('feeds and SEO', () => {
     });
   }
 
-  test('serves the resume placeholder PDF and OG image', async ({ request }) => {
-    const pdf = await request.get('/resume.pdf');
-    expect(pdf.ok()).toBe(true);
-    expect((await pdf.body()).subarray(0, 5).toString()).toBe('%PDF-');
+  test('serves the OG image, and the resume PDF when one is configured', async ({ request }) => {
+    const { pdf: pdfPath } = JSON.parse(readFileSync('src/data/resume.json', 'utf8')) as {
+      pdf?: string;
+    };
+    if (pdfPath) {
+      const pdf = await request.get(pdfPath);
+      expect(pdf.ok()).toBe(true);
+      expect((await pdf.body()).subarray(0, 5).toString()).toBe('%PDF-');
+    }
     const og = await request.get('/og-default.png');
     expect(og.ok()).toBe(true);
     expect(og.headers()['content-type']).toContain('image/png');

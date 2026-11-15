@@ -23,7 +23,7 @@ Without `task`, the same checks run as `pnpm check`, `pnpm test`, `pnpm e2e` and
    slideshow, as `{ kind, slug }` refs to your posts and projects; `[]` omits it).
 3. Replace the content: posts and projects in `src/content/`, the resume in `src/data/resume.json`, and
    poster images in `src/assets/posters/`.
-4. Replace the files in `public/`: `resume.pdf`, `og-default.png` (the social share image) and `favicon.svg`.
+4. Replace the files in `public/`: `og-default.png` (the social share image) and `favicon.svg` (add `resume.pdf` and set `pdf` in `src/data/resume.json` to show the Download PDF button; it is optional).
 5. Set `SITE_URL` to your domain (or change `siteUrl` in `site.config.ts`).
 6. Build with `task build` and deploy the `dist/` folder to any static host.
 

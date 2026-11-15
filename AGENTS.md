@@ -26,7 +26,7 @@ src/scripts/          small deferred scripts (theme, slideshow, header instrumen
 src/content/          posts/, projects/ collections
 src/data/             resume.json
 src/assets/           images processed by Astro
-public/               static files (resume.pdf, og-default.png)
+public/               static files (og-default.png; optional resume.pdf)
 tests/unit, tests/e2e Vitest and Playwright
 ```
 
@@ -61,8 +61,8 @@ src/content/projects/ *.md     { title, section, kind: 'oss'|'work', period, sum
                                  links: { github?, demo? (http(s)), writeup? (http(s) or /path) },
                                  video?: { youtubeId (11 chars), duration, poster } }
 src/data/resume.json           summary, orgs[{ name, period, roles[{ title, period, bullets[] }] }],
-                               skills{ group: items[] }, education[], pdf: '/resume.pdf'
-public/resume.pdf, public/og-default.png, public/favicon.svg, src/assets/posters/*
+                               skills{ group: items[] }, education[], pdf?: '/resume.pdf' (optional; hides the button)
+public/og-default.png, public/resume.pdf (optional), public/favicon.svg, src/assets/posters/*
 ```
 
 - Project Markdown bodies are not rendered; only the frontmatter is used.

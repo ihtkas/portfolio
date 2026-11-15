@@ -1,30 +1,104 @@
 {
-  "summary": "Sample resume data. Replace this file with your own details.",
+  "summary": "I have worked on distributed systems for about 12 years, and as an engineering manager since 2024. Most of that time has gone into backend platforms and the tools other engineers use every day, first on a cloud language runtime at Zoho, then on fintech infrastructure at Fi Money. Since May 2026 I have been at slice, where I lead the Developer Experience and Core Platform teams.",
   "skills": {
-    "Sample group one": ["Sample skill A", "Sample skill B"],
-    "Sample group two": ["Sample skill C"]
+    "Languages": ["Go", "TypeScript"],
+    "Backend": ["gRPC", "Protobuf", "Temporal", "Redis"],
+    "Data": ["Postgres", "CockroachDB"],
+    "Infrastructure": ["AWS", "Kubernetes", "Terraform", "Jenkins", "Keycloak"],
+    "AI": ["MCP", "Google ADK", "LangGraph", "Agent Harness"],
+    "Frontend": ["React"]
   },
   "education": [
-    { "school": "Example University", "degree": "Sample degree", "years": "2000-2004" }
+    {
+      "school": "Sastra University",
+      "degree": "B.Tech in Computer Science",
+      "years": "2010 to 2014"
+    }
   ],
   "orgs": [
     {
-      "name": "Example Co",
-      "period": "2020-Present",
+      "name": "slice",
+      "period": "May 2026 to present",
       "roles": [
         {
-          "title": "Sample Role",
-          "period": "2022-Present",
-          "intro": "Sample introduction to the role.",
-          "bullets": ["Sample bullet one.", "Sample bullet two."]
+          "title": "Engineering Manager, Developer Experience and Core Platform",
+          "period": "May 2026 to present",
+          "intro": "I lead the Developer Experience and Core Platform teams.",
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "name": "Fi Money",
+      "period": "2020 to 2026",
+      "roles": [
+        {
+          "title": "Senior Engineering Manager, Head of AI Initiatives",
+          "period": "2025 to 2026",
+          "intro": "I took on AI adoption across the organisation in September 2025, alongside my engineering manager role.",
+          "bullets": [
+            "Built an internal knowledge search over GitHub, Google Drive, Slack and code docs, using RAG so that people and AI agents can look things up in one place.",
+            "Built an on-call and incident agent with Google ADK. It has custom tools to look for the root cause of alerts and escalated customer issues, and it takes care of the first round of triage.",
+            "Built an evaluation service for the customer support chatbot, which we use to keep improving CSAT.",
+            "Built a multi-agent pipeline that turns semi-structured data into rules and analytics for user acquisition. Processing more than 10 crore records went from months to hours."
+          ]
         },
         {
-          "title": "Sample Earlier Role",
-          "period": "2020-2022",
-          "bullets": ["Sample bullet three."]
+          "title": "Senior Engineering Manager, Platforms, Banking and CX",
+          "period": "2024 to 2025",
+          "bullets": [
+            "Led a team of more than 20 engineers through a reorganisation and helped it get back to a steady pace of delivery.",
+            "Designed Servergen, a code generator that treats server composition as config. It generates the wire dependency injection, gRPC routing and different combinations of microservices in different environments.",
+            "Led the Postgres RDS upgrade from version 11 to 14 across more than 15 services. We used logical replication between publisher and subscriber, worked through it with more than 10 service teams, and kept planned downtime to a few minutes.",
+            "Wrote a design for backend throughput at the platform level: request collapsing at the interceptor layer, batch RPCs, and server-sent events for async flows. It became the reference for optimising the home screen API.",
+            "Worked on the launch of the mobile recharge and bill payment features.",
+            "Relaunched the credit card product on the vendor SDK model to meet new regulations.",
+            "Integrated an AI chatbot platform for customer support, which resolved about 60% of queries digitally, and built an in-house evaluation pipeline to track how it performs.",
+            "Built LCI, a local CI tool that runs checks on the developer's machine and stamps the result cryptographically so GitHub CI can skip the repeat run. CI status shows up almost at once. I also built a CLI that handles the cherry-pick, merge and deploy steps."
+          ]
+        },
+        {
+          "title": "Senior Staff Engineer, Backend Infrastructure",
+          "period": "February 2023 to December 2023",
+          "bullets": [
+            "Split my time between hands-on work (about 60%) and managing a team of 7 (about 40%): mentoring, setting OKRs and the technical direction.",
+            "Designed Quest, an A/B experimentation platform: a gRPC backend, a Go SDK with an eventually consistent cache, and a metrics engine. It plugs in at the interceptor layer with very little overhead and runs hundreds of experiments in parallel.",
+            "Built database migration tools on Temporal that helped cut the CockroachDB cluster size in half with little or no downtime.",
+            "Brought CI/CD build time down from over 10 minutes to about 2, which made end-to-end test automation practical. Isolated environments brought the backend release cycle from about 10 days to about 3.",
+            "Designed a remote debugging toolchain: lenv, a local environment manager, AWS SSO access to staging, and IDE debug configurations across several servers. Reproducing a production-like bug went from hours to minutes."
+          ]
+        },
+        {
+          "title": "Staff Engineer, Backend Infrastructure",
+          "period": "December 2020 to January 2023",
+          "bullets": [
+            "Built a feature management system with code generation and auditable config sync in real time, using Consul KV and Git.",
+            "Built tools that enforce config controls, maker-checker approval and audit trails, which made releases faster and safer.",
+            "Built a debugging framework that lets engineers run just the microservices they are working on locally, connected to the staging environments in the cloud for their dependencies.",
+            "Built an event-driven rule engine behind automations, customer notifications and savings campaigns, including gamified cricket events."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Zoho",
+      "period": "July 2014 to November 2020",
+      "roles": [
+        {
+          "title": "Member Technical Staff",
+          "period": "July 2014 to November 2020",
+          "intro": "I was on the founding team of a programming language, a cloud DSL with built-in ORM support. I worked on the runtime and spent most of my time on the distributed database underneath it.",
+          "bullets": [
+            "Built the core runtime: the built-in data types, function scope, and the expression and statement executor.",
+            "Designed and built a distributed storage layer and transaction manager on Raft and RocksDB.",
+            "Wrote the lexer and the yacc parser for the language.",
+            "Modelled the AST and built a semantic analyser that adds type information to it.",
+            "Implemented the primitive data types and their utilities.",
+            "Built a proof-of-concept transpiler from the typed AST to Go.",
+            "Built a logging package that rotates logs and ships them to an internal log service, and a monitoring stack for the runtime's persistence layer."
+          ]
         }
       ]
     }
-  ],
-  "pdf": "/resume.pdf"
+  ]
 }
