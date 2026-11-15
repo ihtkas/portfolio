@@ -1,0 +1,30 @@
+{
+  "summary": "Sample resume data. Replace this file with your own details.",
+  "skills": {
+    "Sample group one": ["Sample skill A", "Sample skill B"],
+    "Sample group two": ["Sample skill C"]
+  },
+  "education": [
+    { "school": "Example University", "degree": "Sample degree", "years": "2000-2004" }
+  ],
+  "orgs": [
+    {
+      "name": "Example Co",
+      "period": "2020-Present",
+      "roles": [
+        {
+          "title": "Sample Role",
+          "period": "2022-Present",
+          "intro": "Sample introduction to the role.",
+          "bullets": ["Sample bullet one.", "Sample bullet two."]
+        },
+        {
+          "title": "Sample Earlier Role",
+          "period": "2020-2022",
+          "bullets": ["Sample bullet three."]
+        }
+      ]
+    }
+  ],
+  "pdf": "/resume.pdf"
+}
