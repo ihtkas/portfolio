@@ -1,7 +1,9 @@
 // Cloudflare Workers static assets: serves the built `dist/` folder as-is.
 // This is the only Cloudflare-specific file. To host elsewhere, delete it and the `deploy` job in
 // .github/workflows/ci.yml, and serve `dist/` from any static host.
-// Forkers: change `name` and the two domain patterns.
+// The custom domain is attached once in the Cloudflare dashboard, not here, so the CI token only
+// needs permission to deploy Workers and never to change DNS.
+// Forkers: change `name`.
 {
   "$schema": "https://unpkg.com/wrangler@4.162.0/config-schema.json",
   "name": "portfolio",
@@ -11,8 +13,4 @@
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash",
   },
-  "routes": [
-    { "pattern": "sakthibuilds.dev", "custom_domain": true },
-    { "pattern": "www.sakthibuilds.dev", "custom_domain": true },
-  ],
 }

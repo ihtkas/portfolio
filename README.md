@@ -26,9 +26,15 @@ Without `task`, the same checks run as `pnpm check`, `pnpm test`, `pnpm e2e` and
 4. Replace the files in `public/`: `og-default.png` (the social share image) and `favicon.svg` (add `resume.pdf` and set `pdf` in `src/data/resume.json` to show the Download PDF button; it is optional).
 5. Set `SITE_URL` to your domain (or change `siteUrl` in `site.config.ts`).
 6. Build with `task build` and deploy the `dist/` folder to any static host. This repo deploys to Cloudflare
-   Workers static assets from CI after a merge to `main`: change `name` and the domains in `wrangler.jsonc`, and
-   add the repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. To host elsewhere, delete
-   `wrangler.jsonc` and the `deploy` job.
+   Workers static assets from CI after a merge to `main`. To use it:
+   1. Change `name` in `wrangler.jsonc`.
+   2. Create a Cloudflare API token from the "Edit Cloudflare Workers" template, scoped to your account. It
+      needs no DNS permission.
+   3. Add the repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+   4. After the first deploy, attach your domain once in the Cloudflare dashboard: Workers & Pages, then the
+      Worker, then Settings, Domains & Routes, Add custom domain (your domain and its `www`).
+
+   To host elsewhere, delete `wrangler.jsonc` and the `deploy` job.
 
 Components read only from `site.config.ts`, `src/content/`, `src/data/` and `public/`. The schemas fail the
 build with a clear message if a field is missing or invalid. A featured slug that is missing or a draft also
