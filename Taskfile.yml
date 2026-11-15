@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start the dev server
+    cmds:
+      - pnpm astro dev
+  build:
+    desc: Build the static site
+    cmds:
+      - pnpm astro build
+  check:
+    desc: Type check, lint, format check and unit tests
+    cmds:
+      - pnpm astro check
+      - pnpm eslint .
+      - pnpm prettier --check .
+      - pnpm vitest run
+  e2e:
+    desc: Run Playwright tests
+    cmds:
+      - pnpm playwright test

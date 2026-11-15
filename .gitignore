@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+docs/
+drafts/
+.superpowers/
+.playwright-mcp/
+test-results/
+playwright-report/
+.lighthouseci/
+.DS_Store
+.env
+.env.*
+!.env.example
