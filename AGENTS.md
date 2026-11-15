@@ -35,7 +35,10 @@ tests/unit, tests/e2e Vitest and Playwright
 - TypeScript is pinned to 6.0.3: `@astrojs/check` and typescript-eslint do not support TS 7 yet.
 - `@playwright/test` is exactly `1.63.0`, no caret. Each Playwright version wants one specific browser build.
 - Every other dependency is pinned exactly, and the lockfile is committed.
-- No Cloudflare-only features. No adapter, no `_headers` or `_redirects`. Hosting is a separate decision.
+- Hosting: Cloudflare Workers static assets, deployed by the `deploy` job in CI after a merge to `main`
+  (`wrangler.jsonc`). The output stays plain static files. Any other Cloudflare-only feature (adapter,
+  `_headers`, `_redirects`, KV, image service, analytics) needs an explicit owner decision first.
+- Changes land through pull requests that the owner merges. Do not push to `main`.
 - No third-party requests on page load: fonts are self-hosted, no analytics, YouTube loads only on click via `youtube-nocookie.com`.
 - Budgets: at most 8 KB gzipped JS on `/`, 5 KB on other pages, 20 KB gzipped CSS.
 - The site URL comes from the `SITE_URL` env var, falling back to `siteUrl` in `site.config.ts`. Never hard-code the domain elsewhere.
