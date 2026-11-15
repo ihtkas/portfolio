@@ -10,7 +10,13 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "astro check && eslint . && prettier --check . && vitest run",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "budgets": "node scripts/check-budgets.mjs dist",
+    "empty": "node scripts/check-empty.mjs",
+    "gate": "pnpm check && pnpm build && pnpm budgets && pnpm empty && pnpm e2e"
   },
   "dependencies": {
     "@astrojs/mdx": "8.1.6",

@@ -36,6 +36,7 @@ jobs:
       - run: task check
       - run: task build
       - run: task budgets
+      - run: task empty
       - run: pnpm exec playwright install --with-deps chromium
       - run: task e2e
       - name: Upload the Playwright report

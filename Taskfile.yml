@@ -28,10 +28,15 @@ tasks:
     desc: Run Lighthouse CI against dist (needs Chrome; set CHROME_PATH if needed)
     cmds:
       - pnpm lhci autorun
+  empty:
+    desc: Build with empty content folders and assert the empty states render
+    cmds:
+      - node scripts/check-empty.mjs
   gate:
     desc: Everything CI runs except Lighthouse
     cmds:
       - task: check
       - task: build
       - task: budgets
+      - task: empty
       - task: e2e

@@ -5,9 +5,16 @@ updates:
     schedule:
       interval: weekly
     groups:
-      npm:
+      npm-minor-patch:
         patterns: ['*']
+        update-types: [minor, patch]
+      npm-major:
+        patterns: ['*']
+        update-types: [major]
     ignore:
+      # Pinned to 6.0.3: @astrojs/check and typescript-eslint do not support TypeScript 7 yet.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
       # Pinned to match the owner's agent sandbox image; bump together with it.
       - dependency-name: '@playwright/test'
       - dependency-name: 'playwright'

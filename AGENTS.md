@@ -11,6 +11,8 @@ Tools come from mise (`mise install`): node, pnpm, task.
 - `task build` builds the static site into `dist/`.
 - `task check` runs `astro check`, eslint, `prettier --check` and `vitest run`. Run it before every commit.
 - `task e2e` runs the Playwright tests.
+- `task empty` builds with empty content and asserts the empty states render.
+- `task gate` runs check, build, budgets, empty and e2e. Without `task`, use `pnpm gate` (and `pnpm check`, `pnpm test`, `pnpm e2e`).
 
 ## Layout
 
@@ -21,7 +23,8 @@ src/components/       components
 src/layouts/          page layouts
 src/styles/           tokens.css, base.css
 src/scripts/          small deferred scripts (theme, slideshow, header instruments)
-src/content/          posts/, projects/ collections and resume.yaml
+src/content/          posts/, projects/ collections
+src/data/             resume.json
 src/assets/           images processed by Astro
 public/               static files (resume.pdf, og-default.png)
 tests/unit, tests/e2e Vitest and Playwright
@@ -47,19 +50,22 @@ before writing or editing any content. If you do not, keep to sample or neutral 
 
 ## Template contract
 
-Everything personal lives in `site.config.ts`, `src/content/` and `public/`. Components read only from these.
+Everything personal lives in `site.config.ts`, `src/content/`, `src/data/` and `public/`. Components read only from these.
 
 ```
 site.config.ts        name, tagline, location, siteUrl (env SITE_URL, fallback config), socials, nav,
-                      featured (slideshow item refs), about, now (3 lines), theme defaults
+                      description, mark, featured (slideshow item refs), about, now (3 lines),
+                      pages { writing.lede, projects.lede }
 src/content/posts/    *.md(x)  { title, date, dek, kind: 'engineering'|'life', tags[], draft?, updated? }
 src/content/projects/ *.md     { title, section, kind: 'oss'|'work', period, summary, stack[], order,
-                                 links: { github?, demo?, writeup? }, video?: { youtubeId, duration, poster } }
-src/content/resume.yaml        summary, orgs[{ name, period, roles[{ title, period, bullets[] }] }],
+                                 links: { github?, demo? (http(s)), writeup? (http(s) or /path) },
+                                 video?: { youtubeId (11 chars), duration, poster } }
+src/data/resume.json           summary, orgs[{ name, period, roles[{ title, period, bullets[] }] }],
                                skills{ group: items[] }, education[], pdf: '/resume.pdf'
-public/resume.pdf, public/og-default.png, src/assets/posters/*
+public/resume.pdf, public/og-default.png, public/favicon.svg, src/assets/posters/*
 ```
 
+- Project Markdown bodies are not rendered; only the frontmatter is used.
 - Zod schemas on the content collections fail the build on missing or invalid fields.
 - Reading time and prev/next are computed. Section groups and counts are derived from data, never hard-coded.
-- Do not put personal data in components. Put it in the three places above.
+- Do not put personal data in components. Put it in the four places above.

@@ -3,4 +3,4 @@
 ## Claude-only notes
 
 - Run pnpm and node through mise (`mise exec -- ...`), not global installs.
-- Commits are signed and secret-scanned by a pre-commit hook; slow or noisy output there is expected.
+- On the owner's machine, commits are signed and secret-scanned by a hook; slow or noisy output there is expected.
