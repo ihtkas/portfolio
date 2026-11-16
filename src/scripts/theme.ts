@@ -3,9 +3,8 @@ type Theme = 'light' | 'dark';
 const root = document.documentElement;
 
 function effective(): Theme {
-  const set = root.dataset['theme'];
-  if (set === 'light' || set === 'dark') return set;
-  return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  // Dark unless the visitor chose light with the toggle; the system setting is not used.
+  return root.dataset['theme'] === 'light' ? 'light' : 'dark';
 }
 
 function render(button: HTMLElement): void {

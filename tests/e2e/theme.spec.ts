@@ -67,29 +67,26 @@ test.describe('theme toggle', () => {
     expect(await page.evaluate(() => localStorage.getItem('theme'))).toBe('dark');
   });
 
-  test('prefers-color-scheme decides without a stored choice', async ({ browser }) => {
+  test('dark is the default even when the system prefers light', async ({ browser }) => {
     const context = await browser.newContext({ colorScheme: 'light' });
     const page = await context.newPage();
-    await page.goto('/');
-    const toggle = page.locator('header button[aria-label^="Switch to"]');
-    await expect(toggle).toHaveAttribute('aria-label', 'Switch to dark theme');
-    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toBe('rgb(235, 233, 227)');
-    await context.close();
-  });
-
-  test('stored dark wins over a light system preference', async ({ browser }) => {
-    const context = await browser.newContext({ colorScheme: 'light' });
-    await context.addInitScript(() => localStorage.setItem('theme', 'dark'));
-    const page = await context.newPage();
-    await page.goto('/');
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
-      'aria-label',
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(await page.locator('[data-theme-toggle]').getAttribute('aria-label')).toBe(
       'Switch to light theme',
     );
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).not.toBe('rgb(235, 233, 227)');
+    expect(bg).toBe('rgb(5, 6, 12)');
+    await context.close();
+  });
+
+  test('stored light applies for a system-light visitor', async ({ browser }) => {
+    const context = await browser.newContext({ colorScheme: 'light' });
+    await context.addInitScript(() => localStorage.setItem('theme', 'light'));
+    const page = await context.newPage();
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(bg).toBe('rgb(235, 233, 227)');
     await context.close();
   });
 
@@ -101,12 +98,12 @@ test.describe('theme toggle', () => {
     expect(await page.evaluate(() => document.documentElement.dataset['theme'])).toBeUndefined();
     await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
       'aria-label',
-      'Switch to dark theme',
+      'Switch to light theme',
     );
     await context.close();
   });
 
-  test('throwing storage still renders and follows the system', async ({ browser }) => {
+  test('throwing storage still renders dark and the toggle works', async ({ browser }) => {
     const context = await browser.newContext({ colorScheme: 'light' });
     await context.addInitScript(() => {
       Object.defineProperty(window, 'localStorage', {
@@ -120,21 +117,11 @@ test.describe('theme toggle', () => {
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('[data-theme-toggle]')).toHaveAttribute(
       'aria-label',
-      'Switch to dark theme',
+      'Switch to light theme',
     );
     // the click still switches this page even though it cannot persist
     await page.locator('[data-theme-toggle]').click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await context.close();
-  });
-
-  test('a system-light visitor never sees the wrong label', async ({ browser }) => {
-    const context = await browser.newContext({ colorScheme: 'light' });
-    const page = await context.newPage();
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    expect(await page.locator('[data-theme-toggle]').getAttribute('aria-label')).toBe(
-      'Switch to dark theme',
-    );
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     await context.close();
   });
 });
