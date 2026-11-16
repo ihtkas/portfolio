@@ -303,7 +303,8 @@ body::after {
     animation-duration: auto;
     animation-timing-function: linear;
     animation-fill-mode: none;
-    animation-range: cover 55vh cover calc(100% - 45vh);
+    /* a section is "on" while it crosses a line 30% down the viewport */
+    animation-range: cover 70vh cover calc(100% - 30vh);
   }
   .index li:nth-child(1) :is(a, i) {
     animation-timeline: --s1;
@@ -1120,8 +1121,15 @@ html:not(.js) .switch {
   padding-top: 28px;
 }
 
+/* Start the first section level with the side column's top (same padding as .side), so About sits
+   beside the slideshow instead of leaving the top of the right column empty. */
 .stage .main {
-  padding: clamp(120px, 30vh, 280px) 0 0;
+  padding: clamp(96px, 14vh, 140px) 0 0;
+}
+@media (min-width: 901px) {
+  .stage .main > .sec:first-child {
+    padding-top: 0;
+  }
 }
 .about p {
   font-size: clamp(19px, 0.6vw + 14px, 22px);
