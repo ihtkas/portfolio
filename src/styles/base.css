@@ -917,6 +917,39 @@ body {
     display: none;
   }
 }
+/* hover hint naming the instrument (src/scripts/barfx/index.ts) */
+.bfx-hint {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: var(--gutter);
+  padding: 4px 9px;
+  font: 12px/1.4 var(--mono);
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--mute);
+  background: var(--raise);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.bfx-hint.on {
+  opacity: 1;
+  transform: none;
+}
+.bfx-hint.at-nav {
+  left: auto;
+  right: var(--gutter);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bfx-hint {
+    transition: none;
+  }
+}
 
 /* theme switch is a button; it needs JS (the head script adds .js) */
 .switch:focus-visible {

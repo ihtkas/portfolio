@@ -18,6 +18,24 @@ test.describe('header instruments', () => {
     expect(a).not.toBe(b);
   });
 
+  test('hovering names the instrument after a delay', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await expect(page.locator('.bar.has-fx')).toHaveCount(1);
+    const hint = page.locator('.bfx-hint');
+    const mark = await page.locator('.bar .mark').boundingBox();
+    if (!mark) throw new Error('no mark');
+    await page.mouse.move(mark.x + mark.width + 120, mark.y + mark.height / 2);
+    await page.waitForTimeout(300);
+    await expect(hint).not.toHaveClass(/\bon\b/);
+    await expect(hint).toHaveClass(/\bon\b/);
+    await expect(hint).toHaveText(/Harmonograph|Fourier|Lorenz/);
+    await page.locator('header nav').getByRole('link', { name: 'Writing' }).hover();
+    await expect(hint).toHaveText(/damped spring/);
+    await page.mouse.move(700, 600);
+    await expect(hint).not.toHaveClass(/\bon\b/);
+  });
+
   test('ambient canvas is hidden on phones', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await page.goto('/');

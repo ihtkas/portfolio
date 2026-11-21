@@ -17,6 +17,16 @@ const AMBIENT_FRAME = 1 / 30;
 
 const AMBIENT: readonly Instrument[] = [harmonograph, fourier, lorenz];
 
+/* Hover hints, shown after a short dwell with a mouse or pen. HINTS lines up with AMBIENT. */
+const HINT_DELAY = 900;
+const HINTS: readonly string[] = [
+  'Harmonograph: two pendulums slowly losing energy',
+  'Fourier series: spinning circles adding up to a square wave',
+  'Lorenz attractor: chaos from three simple equations',
+];
+const SPRING_HINT = 'The underline is a damped spring';
+type HintKind = 'ambient' | 'spring';
+
 function canvas(
   bar: HTMLElement,
   cls: string,
@@ -106,6 +116,32 @@ function mount(bar: HTMLElement, markEl: HTMLElement, navEl: HTMLElement): void 
     return !isSettled(spring, goal);
   }
 
+  const hint = document.createElement('span');
+  hint.className = 'bfx-hint';
+  hint.setAttribute('aria-hidden', 'true');
+  bar.append(hint);
+  let hintShown: HintKind | null = null;
+  let hintPending: HintKind | null = null;
+  let hintTimer = 0;
+  const hideHint = (): void => {
+    clearTimeout(hintTimer);
+    hintPending = hintShown = null;
+    hint.classList.remove('on');
+  };
+  const armHint = (kind: HintKind): void => {
+    if (hintShown === kind || hintPending === kind) return;
+    hideHint();
+    hintPending = kind;
+    hintTimer = window.setTimeout(() => {
+      hintPending = null;
+      hintShown = kind;
+      hint.textContent = kind === 'spring' ? SPRING_HINT : (HINTS[current] ?? '');
+      hint.classList.toggle('at-nav', kind === 'spring');
+      hint.style.left = kind === 'ambient' ? `${Math.round(geom.mark.x + geom.mark.w + 18)}px` : '';
+      hint.classList.add('on');
+    }, HINT_DELAY);
+  };
+
   let raf = 0;
   let last = 0;
   const ambientOn = (): boolean => !rm.matches && !narrow.matches;
@@ -123,6 +159,7 @@ function mount(bar: HTMLElement, markEl: HTMLElement, navEl: HTMLElement): void 
         if (since > ROTATE) {
           since = 0;
           current = (current + 1) % AMBIENT.length;
+          if (hintShown === 'ambient') hint.textContent = HINTS[current] ?? '';
         }
         cvA.style.opacity = Math.min(1, since / FADE, (ROTATE - since) / FADE).toFixed(3);
         ctxA.clearRect(0, 0, geom.W, geom.H);
@@ -155,6 +192,16 @@ function mount(bar: HTMLElement, markEl: HTMLElement, navEl: HTMLElement): void 
     link.addEventListener('pointerleave', home);
     link.addEventListener('blur', home);
   });
+
+  bar.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    const x = e.clientX - bar.getBoundingClientRect().left;
+    const overLink = linkEls.some((l) => l.contains(e.target as Node));
+    if (overLink && !rm.matches) armHint('spring');
+    else if (ambientOn() && x > geom.mark.x + geom.mark.w && x < geom.nav.x) armHint('ambient');
+    else hideHint();
+  });
+  bar.addEventListener('pointerleave', hideHint);
 
   const onTheme = (): void => {
     palette.read();
