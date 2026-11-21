@@ -164,7 +164,6 @@ function mount(bar: HTMLElement, markEl: HTMLElement, navEl: HTMLElement): void 
     attributes: true,
     attributeFilter: ['data-theme'],
   });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', onTheme);
   rm.addEventListener('change', nudge);
   narrow.addEventListener('change', nudge);
   new ResizeObserver(() => {

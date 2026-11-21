@@ -21,8 +21,7 @@
 <script is:inline>
   {
     const b = document.currentScript.previousElementSibling;
-    const t = document.documentElement.dataset.theme;
-    const light = t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
+    const light = document.documentElement.dataset.theme === 'light';
     b.setAttribute('aria-label', 'Switch to ' + (light ? 'dark' : 'light') + ' theme');
   }
 </script>

@@ -1,8 +1,8 @@
 /*
   Colour tokens. Dark theatre is the default; "house lights" is the light set.
-  Light applies when data-theme="light", or when the visitor prefers light and
-  has not chosen (no data-theme). The inline head script sets data-theme from
-  localStorage before first paint.
+  Dark is the default for every visitor, whatever their system setting. Light
+  applies only when data-theme="light", which the toggle sets. The inline head
+  script sets data-theme from localStorage before first paint.
 */
 :root {
   --bg: #05060c;
@@ -49,27 +49,4 @@
   --sun-o: 0;
   --moon-o: 1;
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    --bg: #ebe9e3;
-    --raise: #e1ded6;
-    --rule: #cdc9be;
-    --ink: #15161e;
-    --mute: #575a68;
-    --lamp: #94480a;
-    --lamp-hot: #6f3504;
-    --glow: rgba(170, 90, 10, 0.07);
-    --name-a: #6f3504;
-    --name-b: #15161e;
-    --name-c: #4b4e5c;
-    --on-lamp: #fff;
-    --code-bg: #14151d;
-    --code-rule: #14151d;
-    --grain-o: 0.035;
-    --sun-o: 0;
-    --moon-o: 1;
-    color-scheme: light;
-  }
 }
